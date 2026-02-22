@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Richard DeVeau</title>
+  <meta name="description" content="Novelist · Creative Director · Painter" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind config must precede CDN script -->
+  <script>
+    tailwind = { config: {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans:  ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }}
+  </script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
+
+  <style>
+    [x-cloak] { display: none !important; }
+    html { scroll-behavior: smooth; }
+    .review-text { white-space: pre-line; }
+
+    /* Base typography */
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    h1, h2, h3, blockquote, blockquote p { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* Carousel */
+    .carousel-track {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 8px;
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+    .carousel-card {
+      flex: 0 0 160px;
+      scroll-snap-align: start;
+      cursor: pointer;
+    }
+    @media (min-width: 640px) { .carousel-card { flex: 0 0 190px; } }
+
+    /* Popup */
+    .popup-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 110;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .popup-inner {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 40px;
+      position: relative;
+    }
+
+    /* Modal */
+    .video-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.96);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 16px 16px;
+    }
+    .video-modal iframe {
+      /* Fill as much of the viewport as possible while keeping 9:16 ratio */
+      height: calc(100vh - 64px);
+      width: calc((100vh - 64px) * 9 / 16);
+      max-width: calc(100vw - 32px);
+      max-height: calc((100vw - 32px) * 16 / 9);
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-white text-stone-900 antialiased"
+  x-data="site()"
+  x-init="init()"
+  @keydown.window.escape="handleEscape()"
+>
+
+  <!-- Hidden form for Netlify bot detection (required) -->
+  <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input name="bot-field" />
+    <input name="name" />
+    <input name="email" />
+    <textarea name="message"></textarea>
+  </form>
+
+  <!-- CONTACT MODAL -->
+  <div
+    class="fixed inset-0 z-[120] flex items-center justify-center p-4"
+    style="background: rgba(0,0,0,0.7); display:none"
+    x-show="contact.open"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    @click.self="closeContact()"
+  >
+    <div class="relative w-full max-w-lg rounded-2xl bg-white p-10 shadow-2xl">
+
+      <!-- Close -->
+      <button
+        @click="closeContact()"
+        class="absolute top-5 right-6 text-stone-400 hover:text-stone-900 text-xl leading-none"
+        aria-label="Close"
+      >✕</button>
+
+      <!-- Success state -->
+      <div x-show="contact.success" class="flex flex-col items-center gap-4 py-8 text-center">
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-stone-900 text-white text-2xl">✓</div>
+        <h3 class="text-2xl font-bold">Message sent.</h3>
+        <p class="text-stone-500 text-sm">Thanks — Richard will be in touch soon.</p>
+        <button
+          @click="closeContact()"
+          class="mt-4 rounded-full bg-stone-900 px-8 py-3 text-sm font-semibold text-white transition hover:bg-stone-700"
+        >Close</button>
+      </div>
+
+      <!-- Form state -->
+      <div x-show="!contact.success">
+        <p class="mb-1 text-xs font-semibold tracking-widest text-stone-400 uppercase">Get in Touch</p>
+        <h3 class="mb-8 text-3xl font-bold leading-tight">Let's connect.</h3>
+
+        <form
+          name="contact"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          @submit.prevent="submitContact($event)"
+          class="flex flex-col gap-5"
+        >
+          <!-- Honeypot (hidden from humans) -->
+          <input type="hidden" name="form-name" value="contact" />
+          <p class="hidden"><input name="bot-field" /></p>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold tracking-widest text-stone-400 uppercase" for="contact-name">Name</label>
+            <input
+              id="contact-name"
+              name="name"
+              type="text"
+              required
+              placeholder="Your name"
+              class="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-900 placeholder-stone-400 outline-none transition focus:border-stone-900 focus:bg-white"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold tracking-widest text-stone-400 uppercase" for="contact-email">Email</label>
+            <input
+              id="contact-email"
+              name="email"
+              type="email"
+              required
+              placeholder="your@email.com"
+              class="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-900 placeholder-stone-400 outline-none transition focus:border-stone-900 focus:bg-white"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold tracking-widest text-stone-400 uppercase" for="contact-message">Message</label>
+            <textarea
+              id="contact-message"
+              name="message"
+              required
+              rows="5"
+              placeholder="What's on your mind?"
+              class="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-900 placeholder-stone-400 outline-none transition focus:border-stone-900 focus:bg-white resize-none"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            :disabled="contact.submitting"
+            class="mt-2 w-full rounded-full bg-stone-900 py-3.5 text-sm font-semibold text-white transition hover:bg-stone-700 disabled:opacity-50"
+            x-text="contact.submitting ? 'Sending…' : 'Send Message'"
+          ></button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GALLERY MODAL -->
+  <div
+    class="fixed inset-0 z-[125]"
+    style="background: rgba(0,0,0,0.95); display:none"
+    x-show="gallery.open"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+  >
+    <!-- Image layer — click backdrop to close -->
+    <div
+      class="absolute inset-0 flex items-center justify-center"
+      style="padding: 56px 72px 52px"
+      @click="closeGallery()"
+    >
+      <img
+        :src="gallery.images[gallery.current]"
+        :alt="gallery.title + ' — ' + (gallery.current + 1) + ' of ' + gallery.images.length"
+        class="max-h-full max-w-full rounded-lg object-contain"
+        @click.stop
+      />
+    </div>
+
+    <!-- Controls layer — always on top -->
+
+    <!-- Close — top right -->
+    <button
+      @click="closeGallery()"
+      class="absolute top-4 right-5 z-10 text-white/50 hover:text-white text-sm font-semibold tracking-widest uppercase transition"
+    >Close ✕</button>
+
+    <!-- Counter — top left -->
+    <p
+      class="absolute top-5 left-5 z-10 text-xs text-white/40 tabular-nums"
+      x-text="(gallery.current + 1) + ' / ' + gallery.images.length"
+    ></p>
+
+    <!-- Prev arrow -->
+    <button
+      @click="galleryPrev()"
+      class="absolute left-3 top-1/2 z-10 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white/60 text-2xl hover:border-white hover:text-white transition"
+      aria-label="Previous"
+    >‹</button>
+
+    <!-- Next arrow -->
+    <button
+      @click="galleryNext()"
+      class="absolute right-3 top-1/2 z-10 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white/60 text-2xl hover:border-white hover:text-white transition"
+      aria-label="Next"
+    >›</button>
+
+    <!-- Dot navigation — bottom center -->
+    <div class="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 flex gap-2">
+      <template x-for="(img, i) in gallery.images" :key="i">
+        <button
+          @click="gallery.current = i"
+          :class="i === gallery.current ? 'bg-white w-6' : 'bg-white/30 w-3'"
+          class="h-1.5 rounded-full transition-all duration-200"
+          :aria-label="'Go to slide ' + (i + 1)"
+        ></button>
+      </template>
+    </div>
+  </div>
+
+  <!-- VIDEO MODAL -->
+  <div
+    class="video-modal"
+    x-show="activeVideo"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    @click.self="closeVideo()"
+    style="display:none"
+  >
+    <div class="relative flex flex-col items-center">
+      <button
+        @click="closeVideo()"
+        class="absolute -top-10 right-0 text-white/70 hover:text-white text-sm font-semibold tracking-widest uppercase"
+      >Close ✕</button>
+      <iframe
+        x-show="activeVideo"
+        :src="activeVideo ? 'https://player.vimeo.com/video/' + activeVideo + '?autoplay=1&color=ffffff&title=0&byline=0&portrait=0' : ''"
+        frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </div>
+
+  <!-- POPUP MODAL -->
+  <div
+    class="popup-modal"
+    x-show="popup.open"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0 scale-95"
+    x-transition:enter-end="opacity-100 scale-100"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100 scale-100"
+    x-transition:leave-end="opacity-0 scale-95"
+    @click.self="closePopup()"
+    style="display:none"
+  >
+    <div class="popup-inner">
+      <button
+        @click="closePopup()"
+        class="absolute top-4 right-5 text-stone-400 hover:text-stone-900 text-xl leading-none font-light"
+        aria-label="Close"
+      >✕</button>
+      <p class="mb-1 text-xs font-semibold tracking-widest text-stone-400 uppercase" x-text="popup.title"></p>
+      <template x-if="popup.image">
+        <div class="my-6 flex flex-col items-center gap-3 sm:float-right sm:ml-6 sm:mb-2">
+          <img :src="popup.image" alt="" class="w-40 rounded-xl object-cover shadow-md" />
+          <p class="text-xs text-stone-400 text-center" x-text="popup.credit"></p>
+        </div>
+      </template>
+      <p class="review-text text-base leading-relaxed text-stone-700" x-text="popup.body"></p>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-stone-200 bg-white/95 backdrop-blur">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <span class="text-sm font-bold tracking-widest uppercase" x-text="d.profile?.name"></span>
+      <ul class="hidden items-center gap-6 text-xs font-semibold tracking-widest uppercase text-stone-500 sm:flex">
+        <li><a href="#in-plain-sight" class="transition hover:text-stone-900">In Plain Sight</a></li>
+        <li><a href="#lights-out"     class="transition hover:text-stone-900">Light's Out</a></li>
+        <li><a href="#creative"       class="transition hover:text-stone-900">Creative</a></li>
+        <li><a href="#artist"         class="transition hover:text-stone-900">Artist</a></li>
+        <li>
+          <button
+            @click="openContact()"
+            class="rounded-full border border-stone-900 px-4 py-1.5 transition hover:bg-stone-900 hover:text-white"
+          >Contact</button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="mx-auto grid min-h-screen max-w-6xl items-start gap-x-16 gap-y-12 px-6 py-28 lg:grid-cols-[1fr_480px]">
+
+    <!-- Text column -->
+    <div class="order-2 lg:order-1">
+      <p class="mb-3 text-xs font-semibold tracking-widest text-stone-400 uppercase" x-text="d.profile?.tagline"></p>
+      <h1 class="text-7xl font-bold leading-none sm:text-9xl" x-text="d.profile?.name"></h1>
+      <p class="mt-8 max-w-xl text-xl leading-relaxed text-stone-600" x-text="d.profile?.bio_summary"></p>
+      <div class="mt-10 flex flex-wrap items-center gap-6">
+        <button
+          @click="openContact()"
+          class="rounded-full bg-stone-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-stone-700"
+        >Get in touch</button>
+        <a
+          :href="d.profile?.links?.linkedin"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm font-semibold text-stone-600 underline-offset-4 hover:text-stone-900 hover:underline"
+        >LinkedIn →</a>
+      </div>
+      <div class="mt-16 w-full border-t border-stone-200 pt-12">
+        <p class="mb-4 text-xs font-semibold tracking-widest text-stone-400 uppercase">Richard's writing is what would result if</p>
+        <p class="font-serif max-w-2xl text-5xl font-light italic leading-snug text-stone-700">
+          Tom Clancy and Louise Penny had a baby.
+        </p>
+      </div>
+    </div>
+
+    <!-- Profile image column — top-aligned with the h1 -->
+    <div class="order-1 lg:order-2 flex justify-center lg:justify-end lg:pt-9">
+      <img
+        :src="d.profile?.profile_image"
+        :alt="d.profile?.name"
+        class="w-72 sm:w-96 lg:w-full aspect-square rounded-2xl object-cover shadow-2xl"
+      />
+    </div>
+
+  </section>
+
+  <!-- ── SECTION 1: IN PLAIN SIGHT ─────────────────────────────────── -->
+  <section id="in-plain-sight">
+
+    <!-- VIDEO HERO -->
+    <div class="relative h-screen min-h-[600px] overflow-hidden">
+
+      <!-- Looping background video -->
+      <video
+        class="absolute inset-0 h-full w-full object-cover"
+        autoplay muted loop playsinline
+        src="https://player.vimeo.com/progressive_redirect/playback/1167134179/rendition/720p/file.mp4%20%28720p%29.mp4?loc=external&log_user=0&signature=c43ca275d90a5815702431bb29ef8c2348595e9013c47caaa9be1d3570dd96fb"
+      ></video>
+
+      <!-- Gradient overlay -->
+      <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.7) 80%, rgba(0,0,0,0.95) 100%)"></div>
+
+      <!-- Hero content -->
+      <div class="absolute inset-0 flex flex-col justify-end pb-14">
+        <div class="mx-auto w-full max-w-6xl px-6">
+
+          <p class="mb-2 text-xs font-semibold tracking-widest text-white/50 uppercase">Section 01 — Author · Latest Release</p>
+          <p class="mb-1 text-xs font-semibold tracking-widest text-white/60 uppercase" x-text="d.in_plain_sight?.series_note"></p>
+          <h2 class="text-6xl font-bold leading-none text-white sm:text-8xl" x-text="d.in_plain_sight?.title"></h2>
+          <p class="font-serif mt-3 text-xl font-light italic text-white/75" x-text="d.in_plain_sight?.subtitle"></p>
+
+          <p class="mt-5 max-w-xl text-sm leading-relaxed text-white/70" x-text="d.in_plain_sight?.synopsis"></p>
+
+          <!-- RT Booksterr pull-quote -->
+          <p class="font-serif mt-4 max-w-lg text-2xl font-light italic text-white/60" x-text="'&ldquo;' + (d.in_plain_sight?.reviews?.[0]?.quote ?? '') + '&rdquo;'"></p>
+
+          <!-- Buy links -->
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a
+              :href="d.in_plain_sight?.buy_links?.amazon"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-full bg-white px-6 py-2.5 text-sm font-bold text-stone-900 transition hover:bg-stone-200"
+            >Buy on Amazon</a>
+            <a
+              :href="d.in_plain_sight?.buy_links?.barnes_noble"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-full border border-white/50 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+            >Barnes &amp; Noble</a>
+            <span class="self-center rounded-full bg-white/20 px-3 py-1 text-xs font-bold text-white" x-text="'Coming ' + d.in_plain_sight?.release_date"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-40">
+        <span class="text-xs text-white tracking-widest uppercase">Scroll</span>
+        <svg class="h-4 w-4 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- BELOW HERO: cover + review -->
+    <div class="bg-stone-50 py-20">
+      <div class="mx-auto max-w-6xl px-6">
+        <div class="grid gap-12 lg:grid-cols-2 lg:items-start">
+
+          <!-- Cover -->
+          <div class="flex justify-center lg:justify-start">
+            <img
+              :src="d.in_plain_sight?.cover_image"
+              :alt="d.in_plain_sight?.title + ' cover'"
+              class="w-full max-w-xs rounded-lg object-contain shadow-2xl"
+            />
+          </div>
+
+          <!-- Saffron review card → popup -->
+          <div class="flex flex-col justify-center">
+            <p class="mb-4 text-xs font-semibold tracking-widest text-stone-400 uppercase">Featured Review</p>
+            <button
+              @click="openPopup(d.in_plain_sight?.saffron_review?.reviewer + ' — Featured Review', d.in_plain_sight?.saffron_review?.text, d.in_plain_sight?.saffron_review?.image, d.in_plain_sight?.saffron_review?.profile)"
+              class="group w-full rounded-2xl border border-stone-200 bg-white p-6 text-left transition hover:border-stone-400 hover:shadow-md"
+            >
+              <div class="flex items-center gap-4">
+                <img
+                  :src="d.in_plain_sight?.saffron_review?.image"
+                  alt="Saffron Cruz"
+                  class="h-14 w-14 rounded-full object-cover ring-2 ring-stone-200"
+                />
+                <div class="flex-1">
+                  <p class="font-bold text-stone-900" x-text="d.in_plain_sight?.saffron_review?.reviewer"></p>
+                  <p class="text-xs text-stone-500" x-text="d.in_plain_sight?.saffron_review?.profile"></p>
+                </div>
+                <span class="text-sm font-semibold text-stone-400 group-hover:text-stone-900 transition">Read review →</span>
+              </div>
+              <p class="mt-4 line-clamp-2 text-sm italic text-stone-500" x-text="'&ldquo;' + (d.in_plain_sight?.saffron_review?.text?.slice(0,120) ?? '') + '…&rdquo;'"></p>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 2: LIGHT'S OUT ────────────────────────────────────── -->
+  <section id="lights-out">
+
+    <!-- VIDEO HERO -->
+    <div class="relative h-screen min-h-[600px] overflow-hidden">
+
+      <!-- Looping background video -->
+      <video
+        class="absolute inset-0 h-full w-full object-cover"
+        autoplay muted loop playsinline
+        src="https://player.vimeo.com/progressive_redirect/playback/1028190347/rendition/720p/file.mp4%20%28720p%29.mp4?loc=external&log_user=0&signature=c3cd9edbfa23c30fd91e289636a3d460451d303c5c832888ceee9c2f4913c766"
+      ></video>
+
+      <!-- Gradient overlay: dark top + very dark bottom -->
+      <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.75) 80%, rgba(0,0,0,0.95) 100%)"></div>
+
+      <!-- Hero content -->
+      <div class="absolute inset-0 flex flex-col justify-end pb-14">
+        <div class="mx-auto w-full max-w-6xl px-6">
+
+          <p class="mb-2 text-xs font-semibold tracking-widest text-white/50 uppercase">Section 02 — Author · Book One</p>
+          <p class="mb-1 text-xs font-semibold tracking-widest text-white/60 uppercase" x-text="d.lights_out?.series_note"></p>
+          <h2 class="text-6xl font-bold leading-none text-white sm:text-8xl" x-text="d.lights_out?.title"></h2>
+          <p class="font-serif mt-3 text-xl font-light italic text-white/75" x-text="d.lights_out?.subtitle"></p>
+          <p class="font-serif mt-2 text-base font-light italic text-white/60" x-text="d.lights_out?.tagline"></p>
+
+          <p class="mt-5 max-w-xl text-sm leading-relaxed text-white/70" x-text="d.lights_out?.synopsis"></p>
+
+          <button
+            @click="openPopup('Full Synopsis', d.lights_out?.synopsis_detail)"
+            class="mt-2 text-xs font-semibold text-white/50 underline-offset-4 hover:text-white hover:underline transition"
+          >Read full synopsis →</button>
+
+          <!-- Audio preview -->
+          <div class="mt-6 max-w-sm">
+            <p class="mb-2 text-xs font-semibold tracking-widest text-white/40 uppercase">Listen to a Preview</p>
+            <audio controls class="w-full" style="filter: invert(1) hue-rotate(180deg) brightness(0.8)">
+              <source :src="d.lights_out?.audio_preview" type="audio/mpeg" />
+            </audio>
+          </div>
+
+          <!-- Buy links -->
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a
+              :href="d.lights_out?.buy_links?.amazon"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-full bg-white px-6 py-2.5 text-sm font-bold text-stone-900 transition hover:bg-stone-200"
+            >Buy on Amazon</a>
+            <a
+              :href="d.lights_out?.buy_links?.barnes_noble"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="rounded-full border border-white/50 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+            >Barnes &amp; Noble</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-40">
+        <span class="text-xs text-white tracking-widest uppercase">Scroll</span>
+        <svg class="h-4 w-4 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- BELOW HERO: dark background content -->
+    <div class="bg-stone-950 py-20">
+      <div class="mx-auto max-w-6xl px-6">
+
+        <!-- Chapter video carousel -->
+        <div x-show="(d.lights_out?.chapter_videos ?? []).length > 0">
+          <div class="mb-6 flex items-center justify-between">
+            <p class="text-xs font-semibold tracking-widest text-stone-500 uppercase">Watch the Story Unfold — 15 Chapters</p>
+            <p class="hidden text-xs text-stone-600 sm:block">Scroll → click to watch</p>
+          </div>
+          <div class="carousel-track" id="chapter-carousel">
+            <template x-for="video in d.lights_out?.chapter_videos ?? []" :key="video.vimeo_id">
+              <div
+                class="carousel-card group relative rounded-xl overflow-hidden bg-stone-800"
+                @click="openVideo(video.vimeo_id)"
+              >
+                <div class="relative overflow-hidden" style="aspect-ratio: 9/16">
+                  <img
+                    :src="video.thumbnail"
+                    :alt="video.title"
+                    class="w-full h-full object-cover transition duration-300 group-hover:scale-105 group-hover:brightness-75"
+                  />
+                  <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg">
+                      <svg class="ml-1 h-5 w-5 text-stone-900" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div class="px-3 py-2">
+                  <p class="text-xs font-semibold text-stone-400" x-text="video.title"></p>
+                </div>
+              </div>
+            </template>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button
+              onclick="document.getElementById('chapter-carousel').scrollBy({left:-560,behavior:'smooth'})"
+              class="flex h-8 w-8 items-center justify-center rounded-full border border-stone-700 text-stone-500 hover:border-stone-400 hover:text-stone-200 transition"
+              aria-label="Scroll left"
+            >‹</button>
+            <button
+              onclick="document.getElementById('chapter-carousel').scrollBy({left:560,behavior:'smooth'})"
+              class="flex h-8 w-8 items-center justify-center rounded-full border border-stone-700 text-stone-500 hover:border-stone-400 hover:text-stone-200 transition"
+              aria-label="Scroll right"
+            >›</button>
+          </div>
+        </div>
+
+        <!-- Reviews horizontal scroller -->
+        <div class="mt-16">
+          <div class="mb-6 flex items-center justify-between">
+            <p class="text-xs font-semibold tracking-widest text-stone-500 uppercase">Reader Reviews</p>
+            <div class="flex gap-2">
+              <button
+                onclick="document.getElementById('reviews-carousel').scrollBy({left:-400,behavior:'smooth'})"
+                class="flex h-8 w-8 items-center justify-center rounded-full border border-stone-700 text-stone-500 hover:border-stone-400 hover:text-stone-200 transition"
+                aria-label="Scroll left"
+              >‹</button>
+              <button
+                onclick="document.getElementById('reviews-carousel').scrollBy({left:400,behavior:'smooth'})"
+                class="flex h-8 w-8 items-center justify-center rounded-full border border-stone-700 text-stone-500 hover:border-stone-400 hover:text-stone-200 transition"
+                aria-label="Scroll right"
+              >›</button>
+            </div>
+          </div>
+
+          <div class="carousel-track" id="reviews-carousel">
+
+            <!-- Saffron Cruz — featured card (first) -->
+            <button
+              @click="openPopup(d.lights_out?.saffron_review?.reviewer + ' — Featured Review', d.lights_out?.saffron_review?.text, d.lights_out?.saffron_review?.image, d.lights_out?.saffron_review?.profile)"
+              class="group flex-none w-80 rounded-2xl border border-stone-700 bg-stone-800 p-7 text-left transition hover:border-stone-500 scroll-snap-align-start"
+              style="scroll-snap-align: start"
+            >
+              <div class="flex items-center gap-3 mb-5">
+                <img
+                  :src="d.lights_out?.saffron_review?.image"
+                  alt="Saffron Cruz"
+                  class="h-10 w-10 rounded-full object-cover ring-2 ring-stone-600"
+                />
+                <div>
+                  <p class="text-sm font-bold text-white" x-text="d.lights_out?.saffron_review?.reviewer"></p>
+                  <p class="text-xs text-stone-500" x-text="d.lights_out?.saffron_review?.profile"></p>
+                </div>
+              </div>
+              <blockquote>
+                <p class="text-3xl font-light italic leading-snug text-white" x-text="'&ldquo;' + (d.lights_out?.saffron_review?.text?.slice(0,100) ?? '') + '…&rdquo;'"></p>
+              </blockquote>
+              <p class="mt-5 text-xs font-semibold text-stone-500 group-hover:text-stone-300 transition">Read full review →</p>
+            </button>
+
+            <!-- 9 short reader reviews -->
+            <template x-for="review in d.lights_out?.reviews ?? []" :key="review.author + review.quote">
+              <figure
+                class="flex-none w-72 rounded-2xl border border-stone-800 bg-stone-900 p-7 flex flex-col justify-between"
+                style="scroll-snap-align: start"
+              >
+                <blockquote class="text-3xl font-light italic leading-snug text-white" x-text="'&ldquo;' + review.quote + '&rdquo;'"></blockquote>
+                <figcaption class="mt-6 text-xs font-semibold tracking-widest text-stone-500 uppercase" x-text="'— ' + review.author"></figcaption>
+              </figure>
+            </template>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECTION 3: CREATIVE DIRECTOR ──────────────────────────────── -->
+  <section id="creative" class="bg-stone-50 py-24">
+    <div class="mx-auto max-w-6xl px-6">
+
+      <!-- Label -->
+      <p class="mb-12 text-xs font-semibold tracking-widest text-stone-400 uppercase">Section 03 — Creative Director</p>
+
+      <div class="grid gap-16 lg:grid-cols-2">
+
+        <div>
+          <h2 class="mb-6 text-5xl font-bold leading-tight" x-text="d.creative?.headline"></h2>
+          <p class="text-base leading-relaxed text-stone-600" x-text="d.creative?.summary"></p>
+
+          <!-- Brands -->
+          <div class="mt-10">
+            <p class="mb-4 text-xs font-semibold tracking-widest text-stone-400 uppercase">Brands &amp; Causes</p>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="brand in d.creative?.brands ?? []" :key="brand">
+                <span class="rounded-full border border-stone-300 px-4 py-1.5 text-sm font-medium text-stone-700" x-text="brand"></span>
+              </template>
+            </div>
+          </div>
+
+          <!-- LinkedIn CTA -->
+          <div class="mt-10">
+            <a
+              :href="d.creative?.linkedin"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 rounded-full bg-stone-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-stone-700"
+            >View on LinkedIn →</a>
+          </div>
+        </div>
+
+        <!-- Notable work cards -->
+        <div class="flex flex-col gap-6">
+          <p class="text-xs font-semibold tracking-widest text-stone-400 uppercase">Notable Work</p>
+          <template x-for="work in d.creative?.notable_work ?? []" :key="work.title">
+            <div
+              class="relative overflow-hidden rounded-xl p-6 flex flex-col justify-end"
+              :class="work.gallery?.length ? 'min-h-72 border-0' : 'border border-stone-200 bg-white'"
+              :style="work.gallery?.length ? { backgroundImage: 'url(' + work.gallery[0] + ')', backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
+            >
+              <!-- Gradient overlay for image cards -->
+              <div
+                x-show="work.gallery?.length"
+                class="absolute inset-0 pointer-events-none"
+                style="background: linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.88) 100%)"
+              ></div>
+
+              <!-- Card content -->
+              <div class="relative">
+                <div class="mb-2 flex items-start justify-between gap-4">
+                  <h3 class="text-lg font-bold" :class="work.gallery?.length ? 'text-white' : 'text-stone-900'" x-text="work.title"></h3>
+                  <span class="shrink-0 text-xs font-semibold" :class="work.gallery?.length ? 'text-white/50' : 'text-stone-400'" x-text="work.year" x-show="work.year"></span>
+                </div>
+                <p class="text-xs font-semibold tracking-widest uppercase" :class="work.gallery?.length ? 'text-white/50' : 'text-stone-400'" x-text="work.client" x-show="work.client && work.client !== 'Agency' && work.client !== 'Various'"></p>
+                <p class="mt-2 text-sm leading-relaxed" :class="work.gallery?.length ? 'text-white/75' : 'text-stone-600'" x-text="work.description"></p>
+                <p class="mt-2 text-xs font-semibold" :class="work.gallery?.length ? 'text-white/50' : 'text-stone-500'" x-text="work.milestone" x-show="work.milestone"></p>
+                <button
+                  x-show="work.gallery?.length"
+                  @click="openGallery(work.title, work.gallery)"
+                  class="mt-4 text-xs font-semibold tracking-widest text-white uppercase underline-offset-4 hover:underline transition"
+                >View gallery →</button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- AI Videos — intro text left, 3 portrait videos right -->
+      <div class="mt-16 grid gap-12 lg:grid-cols-[280px_1fr] lg:items-start">
+
+        <!-- Intro text -->
+        <div class="lg:pt-2">
+          <p class="mb-3 text-xs font-semibold tracking-widest text-stone-400 uppercase">Video Work</p>
+          <h3 class="font-serif text-2xl font-bold leading-snug text-stone-900" x-text="d.creative?.video_intro?.headline"></h3>
+          <div class="mt-5 flex flex-col gap-4">
+            <template x-for="(para, i) in d.creative?.video_intro?.paragraphs ?? []" :key="i">
+              <p class="text-base leading-relaxed text-stone-600" x-text="para"></p>
+            </template>
+          </div>
+        </div>
+
+        <!-- 3 portrait video cards -->
+        <div class="grid gap-5 grid-cols-3">
+          <template x-for="video in d.creative?.video_assets ?? []" :key="video.vimeo_id">
+            <div class="group flex flex-col gap-3 cursor-pointer" @click="openVideo(video.vimeo_id)">
+
+              <!-- 9:16 thumbnail -->
+              <div class="relative overflow-hidden rounded-xl bg-stone-200" style="aspect-ratio: 9/16">
+                <img
+                  :src="video.thumbnail"
+                  :alt="video.title"
+                  class="h-full w-full object-cover transition duration-300 group-hover:scale-105 group-hover:brightness-75"
+                />
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200">
+                  <div class="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 shadow-xl">
+                    <svg class="ml-1 h-5 w-5 text-stone-900" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Title -->
+              <p class="text-sm font-semibold text-stone-900 leading-snug" x-text="video.title"></p>
+
+            </div>
+          </template>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── SECTION 4: ARTIST ──────────────────────────────────────────── -->
+  <section id="artist" class="bg-white py-24">
+    <div class="mx-auto max-w-6xl px-6">
+
+      <!-- Label -->
+      <p class="mb-12 text-xs font-semibold tracking-widest text-stone-400 uppercase">Section 04 — Visual Artist</p>
+
+      <!-- Artist statement -->
+      <div class="mb-16 max-w-3xl">
+        <blockquote class="text-4xl font-light italic leading-relaxed text-stone-700" x-text="d.artist?.statement"></blockquote>
+      </div>
+
+      <div class="grid gap-16 lg:grid-cols-2">
+
+        <!-- Exhibits -->
+        <div>
+          <p class="mb-6 text-xs font-semibold tracking-widest text-stone-400 uppercase">Solo Exhibits</p>
+          <ol class="space-y-4">
+            <template x-for="exhibit in d.artist?.solo_exhibits ?? []" :key="exhibit.year + exhibit.title">
+              <li class="flex gap-4">
+                <span class="w-20 shrink-0 text-xs font-bold text-stone-400" x-text="exhibit.year"></span>
+                <div>
+                  <p class="font-semibold text-stone-800" x-text="exhibit.title"></p>
+                  <p class="text-xs text-stone-500" x-text="exhibit.venue + (exhibit.location ? ', ' + exhibit.location : '')"></p>
+                </div>
+              </li>
+            </template>
+          </ol>
+        </div>
+
+        <!-- Publications + Awards -->
+        <div class="flex flex-col gap-12">
+
+          <div>
+            <p class="mb-6 text-xs font-semibold tracking-widest text-stone-400 uppercase">Publications</p>
+            <ul class="space-y-2">
+              <template x-for="pub in d.artist?.publications ?? []" :key="pub">
+                <li class="flex items-start gap-3 text-sm text-stone-600">
+                  <span class="mt-2 h-1 w-4 shrink-0 bg-stone-400"></span>
+                  <span x-text="pub"></span>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <div>
+            <p class="mb-4 text-xs font-semibold tracking-widest text-stone-400 uppercase">Awards &amp; Recognition</p>
+            <ul class="space-y-3">
+              <template x-for="award in d.artist?.highlights ?? []" :key="award">
+                <li class="rounded-xl border border-stone-200 bg-stone-50 px-5 py-4 text-sm font-medium text-stone-700" x-text="award"></li>
+              </template>
+            </ul>
+          </div>
+
+          <div>
+            <p class="mb-4 text-xs font-semibold tracking-widest text-stone-400 uppercase">Series</p>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="s in d.artist?.series ?? []" :key="s">
+                <span class="rounded-full bg-stone-900 px-4 py-1.5 text-sm font-medium text-white" x-text="s"></span>
+              </template>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Paintings — horizontal scroll gallery -->
+      <div class="mt-16">
+        <div class="mb-5 flex items-center justify-between">
+          <p class="text-xs font-semibold tracking-widest text-stone-400 uppercase">Selected Works · <span x-text="(d.artist?.paintings ?? []).length"></span> paintings</p>
+          <div class="flex gap-2">
+            <button
+              onclick="document.getElementById('paintings-carousel').scrollBy({left:-520,behavior:'smooth'})"
+              class="flex h-8 w-8 items-center justify-center rounded-full border border-stone-300 text-stone-500 hover:border-stone-900 hover:text-stone-900 transition"
+              aria-label="Scroll left"
+            >‹</button>
+            <button
+              onclick="document.getElementById('paintings-carousel').scrollBy({left:520,behavior:'smooth'})"
+              class="flex h-8 w-8 items-center justify-center rounded-full border border-stone-300 text-stone-500 hover:border-stone-900 hover:text-stone-900 transition"
+              aria-label="Scroll right"
+            >›</button>
+          </div>
+        </div>
+
+        <div class="carousel-track" id="paintings-carousel">
+          <template x-for="(painting, i) in d.artist?.paintings ?? []" :key="i">
+            <div
+              class="group flex-none cursor-pointer rounded-xl overflow-hidden bg-stone-100"
+              style="width: 200px; scroll-snap-align: start"
+              @click="openPaintings(i)"
+            >
+              <div class="overflow-hidden" style="aspect-ratio: 1/1">
+                <img
+                  :src="painting.url + '?format=400w'"
+                  :alt="painting.title"
+                  class="h-full w-full object-cover transition duration-300 group-hover:scale-105 group-hover:brightness-90"
+                  loading="lazy"
+                />
+              </div>
+              <div class="px-3 py-2">
+                <p class="truncate text-xs text-stone-600 group-hover:text-stone-900 transition" x-text="painting.title"></p>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-stone-200 bg-stone-900 py-12">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="flex flex-col items-center gap-6 text-center sm:flex-row sm:justify-between sm:text-left">
+        <div>
+          <p class="font-serif text-2xl font-bold text-white" x-text="d.profile?.name"></p>
+          <p class="mt-1 text-sm text-stone-400" x-text="d.profile?.tagline"></p>
+        </div>
+        <div class="flex flex-col items-center gap-3 sm:items-end">
+          <a
+            :href="'mailto:' + d.profile?.email"
+            x-text="d.profile?.email"
+            class="text-sm text-stone-400 underline-offset-4 hover:text-white hover:underline"
+          ></a>
+          <div class="flex gap-4">
+            <a
+              :href="d.profile?.links?.linkedin"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-xs font-semibold tracking-widest text-stone-500 uppercase hover:text-white"
+            >LinkedIn →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function site() {
+      return {
+        d: {},
+        activeVideo: null,
+        popup: { open: false, title: '', body: '', image: '', credit: '' },
+        contact: { open: false, success: false, submitting: false },
+        gallery: { open: false, title: '', images: [], current: 0 },
+        async init() {
+          const res = await fetch('./data.json');
+          this.d = await res.json();
+        },
+        openVideo(id) {
+          this.activeVideo = id;
+          document.body.style.overflow = 'hidden';
+        },
+        closeVideo() {
+          this.activeVideo = null;
+          document.body.style.overflow = '';
+        },
+        openPopup(title, body, image, credit) {
+          this.popup = { open: true, title, body, image: image || '', credit: credit || '' };
+          document.body.style.overflow = 'hidden';
+        },
+        closePopup() {
+          this.popup.open = false;
+          document.body.style.overflow = '';
+        },
+        openGallery(title, images, startIndex) {
+          this.gallery = { open: true, title, images, current: startIndex ?? 0 };
+          document.body.style.overflow = 'hidden';
+        },
+        openPaintings(startIndex) {
+          const images = (this.d.artist?.paintings ?? []).map(p => p.url + '?format=1500w');
+          this.gallery = { open: true, title: 'Selected Works', images, current: startIndex };
+          document.body.style.overflow = 'hidden';
+        },
+        closeGallery() {
+          this.gallery.open = false;
+          document.body.style.overflow = '';
+        },
+        galleryNext() {
+          this.gallery.current = (this.gallery.current + 1) % this.gallery.images.length;
+        },
+        galleryPrev() {
+          this.gallery.current = (this.gallery.current - 1 + this.gallery.images.length) % this.gallery.images.length;
+        },
+        openContact() {
+          this.contact = { open: true, success: false, submitting: false };
+          document.body.style.overflow = 'hidden';
+        },
+        closeContact() {
+          this.contact.open = false;
+          document.body.style.overflow = '';
+        },
+        async submitContact(e) {
+          this.contact.submitting = true;
+          const data = new FormData(e.target);
+          try {
+            await fetch('/', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams(data).toString()
+            });
+            this.contact.success = true;
+          } catch (err) {
+            alert('Something went wrong. Please try again.');
+          } finally {
+            this.contact.submitting = false;
+          }
+        },
+        handleEscape() {
+          if (this.gallery.open) { this.closeGallery(); }
+          else if (this.popup.open) { this.closePopup(); }
+          else if (this.contact.open) { this.closeContact(); }
+          else { this.closeVideo(); }
+        }
+      };
+    }
+  </script>
+
+</body>
+</html>
