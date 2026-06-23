@@ -1,7 +1,7 @@
 {
   "profile": {
     "name": "Richard DeVeau",
-    "tagline": "Novelist · Creative Director · Painter",
+    "tagline": "Novelist · Painter",
     "logo": "assets/logo-richard-deveau-black.svg",
     "logo_white": "assets/logo-richard-deveau-white.svg",
     "email": "richardadeveau@gmail.com",
@@ -19,10 +19,37 @@
     "release_date": "2026",
     "hero_video": "https://player.vimeo.com/progressive_redirect/playback/1167134179/rendition/720p/file.mp4%20%28720p%29.mp4?loc=external&log_user=0&signature=c43ca275d90a5815702431bb29ef8c2348595e9013c47caaa9be1d3570dd96fb",
     "cover_image": "https://res.cloudinary.com/dsbllwpbh/image/upload/f_auto,q_auto,w_1000/v1781900863/richard-deveau-2026/in-plain-sight-cover.png",
-    "synopsis": "Following the devastating Greater Boston Massacre, CIA officer Eve Tuant returns—sharper, more guarded, and more exhausted than ever. The shift from chaos to the snake pit of Washington politics is seamless and treacherous. Backroom deals, carefully worded conversations, and the constant sense that someone is always listening. Three conspirators remain embedded at the highest levels of government. A looming assassination plot keeps the tension coiled tight. And when Eve realizes she has been marked for elimination, the paranoia ramps into overdrive. Smart, grounded, and relentlessly plotted — In Plain Sight is a high-stakes political thriller that doesn't let up.",
+    "synopsis": "Following the devastating Greater Boston Massacre, CIA officer Eve Tuant returns—sharper, more guarded, and more single-minded than ever. The shift from chaos to the snake pit of Washington politics is seamless and treacherous. Backroom deals, carefully worded conversations, and the constant sense that someone is always listening. Three conspirators remain embedded at the highest levels of government. A looming assassination plot keeps the tension coiled tight. And when Eve realizes she has been marked for elimination, the paranoia ramps into overdrive. Smart, grounded, and relentlessly plotted — In Plain Sight is a high-stakes political thriller that doesn't let up.",
     "buy_links": {
       "amazon": "https://www.amazon.com/Plain-Sight-Eve-Tuant/dp/1998501779/ref=tmm_pap_swatch_0?_encoding=UTF8&qid=1733405301&sr=1-1-catcorr",
       "barnes_noble": "https://www.barnesandnoble.com/w/in-plain-sight-richard-deveau/1148865724?ean=9781998501779"
+    },
+    "featured_quote": {
+      "text": "It reminded me a bit of early Vince Flynn or Brad Meltzer, but with a more personal, grounded lead.",
+      "source": "Saffron Cruz · reads.saffron"
+    },
+    "podcast": {
+      "show": "Living The Next Chapter Podcast",
+      "host": "Dave Campbell",
+      "title": "In Washington, nothing is what it seems",
+      "episode": "Episode 716",
+      "logo": "https://res.cloudinary.com/dsbllwpbh/image/upload/f_auto,q_auto,w_200/v1781902571/richard-deveau-2026/living-the-next-chapter-podcast-logo.jpg",
+      "audio": "https://res.cloudinary.com/dsbllwpbh/video/upload/v1782232343/richard-deveau-2026/living-the-next-chapter-in-plain-sight.mp3",
+      "youtube": "trBMv0Jnbec",
+      "chapters": [
+        { "t": 0,    "title": "Welcome back" },
+        { "t": 150,  "title": "The origin of Lights Out" },
+        { "t": 485,  "title": "Pacing a series & standalone books" },
+        { "t": 720,  "title": "Military detail & the joy of research" },
+        { "t": 850,  "title": "Writing is painting: the five senses" },
+        { "t": 1115, "title": "The craft of dialogue" },
+        { "t": 1480, "title": "Character voices & Eve's heritage" },
+        { "t": 1710, "title": "Inside In Plain Sight" },
+        { "t": 1980, "title": "Developing Eve: the warrior-artist" },
+        { "t": 2350, "title": "Inspiration & authenticity" },
+        { "t": 2675, "title": "Finding Richard & book signings" },
+        { "t": 2855, "title": "How he scared Stephen King" }
+      ]
     },
     "reviews": [
       {
@@ -93,8 +120,25 @@
       "show": "Living The Next Chapter Podcast",
       "host": "Dave Campbell",
       "title": "Special Forces, CIA officer, and Boston's Homeland Security team",
+      "episode": "Episode 525",
       "logo": "https://res.cloudinary.com/dsbllwpbh/image/upload/f_auto,q_auto,w_200/v1781902571/richard-deveau-2026/living-the-next-chapter-podcast-logo.jpg",
-      "audio": "https://res.cloudinary.com/dsbllwpbh/video/upload/v1781902577/richard-deveau-2026/living-the-next-chapter-podcast.mp3"
+      "audio": "https://res.cloudinary.com/dsbllwpbh/video/upload/v1781902577/richard-deveau-2026/living-the-next-chapter-podcast.mp3",
+      "chapters": [
+        { "t": 0,    "title": "Welcome" },
+        { "t": 150,  "title": "Becoming an author" },
+        { "t": 240,  "title": "Writing & selling the first book" },
+        { "t": 430,  "title": "Advice for new writers" },
+        { "t": 660,  "title": "Don't wait for inspiration" },
+        { "t": 770,  "title": "Painting meets writing" },
+        { "t": 1050, "title": "The lighthouse that sparked it" },
+        { "t": 1170, "title": "Creating Eve Tuant" },
+        { "t": 1350, "title": "Inside the story" },
+        { "t": 1450, "title": "Who it's for, and the reviews" },
+        { "t": 1740, "title": "Writing it like a movie" },
+        { "t": 1860, "title": "Structure & the art of rewriting" },
+        { "t": 2160, "title": "Giving Eve her flaws" },
+        { "t": 2320, "title": "Website, videos & what's next" }
+      ]
     },
     "synopsis": "In Richard DeVeau's gripping debut novel, the serene landscapes of Door County, Wisconsin and the vast expanse of Lake Michigan become the opening scene in an explosive tale of deception, high-stakes political conspiracy, and domestic terrorism. With vivid prose and heart-pounding suspense, this is a masterfully woven thriller filled with intrigue, surprising plot twists, and compelling characters. Prepare to be grabbed by the collar from the first sentence and not released until the last period.",
     "synopsis_detail": "A retired couple are murdered in their Wisconsin home—art and other valuables are stolen. A Lake Michigan oil tanker explodes and sinks that same night. Eve Tuant—special forces veteran, CIA officer, and leader of Boston's Homeland Security team—believes there is a connection between these two events. She and her team quickly find themselves in pursuit of a domestic terrorist—an MIT-educated, military trained missile genius with Ted Bundy-like psychopathy—to stop him before he carries out his next devastating attack. This one even more lethal than the overwhelming inferno he just unleashed on Greater Boston. As Eve closes in, she discovers these attacks are orchestrated by a US senator and a powerful cabal of highly placed leaders and lawmakers with a hidden agenda.",
@@ -297,6 +341,66 @@
         "location": "Boston, MA"
       }
     ],
+    "group_exhibits": [
+      { "year": "2025", "shows": [
+        "Water Street Studios, Dempsey Gallery — 16th Anniversary Exhibit",
+        "Water Street Studios, Dempsey Gallery — Artists Collective Group Exhibit",
+        "Water Street Studios, Dempsey Gallery — Membership Show"
+      ] },
+      { "year": "2024", "shows": [
+        "Water Street Studios, Dempsey Gallery — Membership Show",
+        "Water Street Studios, Dempsey Gallery — Artists Collective Group Exhibit"
+      ] },
+      { "year": "2023", "shows": [
+        "Water Street Studios, Dempsey Gallery — Artists Collective Group Exhibit",
+        "Tall Grass Arts Association — Artists Collective Group Exhibit, Park Forest, IL"
+      ] },
+      { "year": "2022", "shows": [
+        "The Next Picture Show Gallery — Artists Collective Group Exhibit, Dixon, IL"
+      ] },
+      { "year": "2021", "shows": [
+        "Water Street Studios, Dempsey Gallery — Artists Collective Group Exhibit"
+      ] },
+      { "year": "2020", "shows": [
+        "Water Street Studios, Dempsey Gallery — Artists Collective Group Exhibit",
+        "Argonne National Laboratory — WSS Collective Group Show, Lemont, IL"
+      ] },
+      { "year": "2019", "shows": [
+        "Water Street Studios, Dempsey Gallery — 10th Anniversary Exhibit",
+        "Water Street Studios, Dempsey Gallery — Artists Collective Group Exhibit",
+        "Norris Cultural Arts Center — Celebrating 50 Years Anniversary Show"
+      ] },
+      { "year": "2018", "shows": [
+        "Water Street Studios, Dempsey Gallery — 9th Anniversary Exhibit",
+        "Water Street Studios, Dempsey Gallery — Artists Collective Group Exhibit",
+        "Laura A. Sprague Art Gallery, Joliet Junior College — Artists Collective Exhibit",
+        "Water Street Studios, Dempsey Gallery — Resident Artists Exhibit"
+      ] },
+      { "year": "2017", "shows": [
+        "Water Street Studios, Dempsey Gallery — Project Fusion / The Big Reveal",
+        "Chicago Theological Union — Artists Interpret American Literature, Chicago, IL",
+        "Water Street Studios, Dempsey Gallery — 8th Anniversary Exhibit",
+        "Water Street Studios, Dempsey Gallery — Collective Artists Exhibit",
+        "Water Street Studios, Dempsey Gallery — Resident Artists Exhibit"
+      ] },
+      { "year": "2016", "shows": [
+        "Water Street Studios, Dempsey Gallery — 7th Anniversary Exhibit",
+        "Water Street Studios, Dempsey Gallery — Flag Day Exhibit"
+      ] },
+      { "year": "2013", "shows": [
+        "Water Street Studios, Dempsey Gallery — Group Exhibit"
+      ] },
+      { "year": "2012", "shows": [
+        "Carbon Show — Giclee Link, Alchemy Works on Paper, London, England"
+      ] },
+      { "year": "2002–2004", "shows": [
+        "Kingston Gallery — Members Show (September), Boston, MA",
+        "Provincetown Art Association — Quarterly Group Shows, Provincetown, MA"
+      ] },
+      { "year": "1995–2006", "shows": [
+        "United South End Open Studios — Boston, MA"
+      ] }
+    ],
     "publications": [
       "New Art Examiner, Summer Issue, 2021",
       "Neighbors Magazine, 11/6/17",
@@ -308,7 +412,7 @@
     ],
     "highlights": [
       "Best of Show Award 2016: \"With Liberty and Justice for Some\"",
-      "Carbon Show 2012, Giclee Link, Alchemy Works on Paper, London, England"
+      "Carbon Show 2012, Honorable Mention"
     ],
     "paintings": [
       {

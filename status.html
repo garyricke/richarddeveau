@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Build Status — Richard DeVeau</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon-jun2026-black.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind = { config: { theme: { extend: { fontFamily: {
+      serif: ['"Playfair Display"', 'Georgia', 'serif'],
+      sans:  ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+    }, colors: { gold: '#b5894a' } } } } }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+  </style>
+</head>
+
+<body class="bg-stone-950 text-stone-300 antialiased">
+
+<!-- ============================================================
+     PER-PAGE PASSWORD GATE (shares session key with index admin panel)
+     ============================================================ -->
+<style>
+  #pw-gate{position:fixed;inset:0;z-index:9999;background:#0c0a09;display:flex;align-items:center;justify-content:center;font-family:'Inter',system-ui,sans-serif;}
+  #pw-gate::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(181,137,74,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(181,137,74,.06) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+  #pw-box{position:relative;background:rgba(255,255,255,.04);border:1px solid color-mix(in srgb, #b5894a 25%, transparent);border-radius:16px;padding:48px 40px;text-align:center;width:min(400px,90vw);box-shadow:0 24px 80px rgba(0,0,0,.5);}
+  #pw-box img{height:42px;margin-bottom:24px;display:block;margin-inline:auto;}
+  #pw-box h2{font-family:'Playfair Display',Georgia,serif;font-size:2rem;color:#b5894a;letter-spacing:.04em;margin:0 0 8px;}
+  #pw-box .sub{font-size:.85rem;color:rgba(245,245,244,.55);margin:0 0 28px;letter-spacing:.02em;}
+  #pw-input{width:100%;padding:12px 16px;background:rgba(0,0,0,.3);border:1px solid color-mix(in srgb, #b5894a 30%, transparent);border-radius:8px;color:#fff;font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s;}
+  #pw-input:focus{border-color:#b5894a;}
+  #pw-btn{margin-top:14px;width:100%;padding:12px;background:#b5894a;color:#1c1917;border:0;border-radius:8px;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.05rem;letter-spacing:.06em;cursor:pointer;transition:background .2s;}
+  #pw-btn:hover{background:#cda161;}
+  #pw-error{font-size:.8rem;color:#ff7a7a;margin:12px 0 0;min-height:1.2em;}
+  .pw-shake{animation:pwShake .35s;}
+  @keyframes pwShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+</style>
+<div id="pw-gate">
+  <div id="pw-box">
+    <img src="assets/logo-richard-deveau-white.svg" alt="Richard DeVeau" onerror="this.style.display='none'">
+    <h2>Internal</h2>
+    <p class="sub">This page is password protected.</p>
+    <input id="pw-input" type="password" placeholder="Enter password" autocomplete="current-password">
+    <button id="pw-btn">Enter</button>
+    <p id="pw-error"></p>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY='rdv_admin',PASS='writeme',gate=document.getElementById('pw-gate');
+  if(sessionStorage.getItem(KEY)==='1'){gate.style.display='none';return;}
+  document.body.style.overflow='hidden';
+  function attempt(){
+    if(document.getElementById('pw-input').value===PASS){
+      sessionStorage.setItem(KEY,'1');
+      document.body.style.overflow='';
+      gate.style.display='none';
+    } else {
+      document.getElementById('pw-error').textContent='Incorrect password. Try again.';
+      var box=document.getElementById('pw-box');
+      box.classList.remove('pw-shake'); void box.offsetWidth; box.classList.add('pw-shake');
+    }
+  }
+  document.getElementById('pw-btn').addEventListener('click',attempt);
+  document.getElementById('pw-input').addEventListener('keydown',function(e){if(e.key==='Enter')attempt();});
+  document.getElementById('pw-input').focus();
+})();
+</script>
+
+<!-- ============================================================
+     STATUS CONTENT
+     ============================================================ -->
+<div class="mx-auto max-w-4xl px-6 py-16 sm:py-20">
+
+  <!-- Header -->
+  <header class="border-b border-stone-800 pb-10">
+    <p class="text-xs font-semibold tracking-[0.25em] text-gold uppercase">Richard DeVeau · Internal</p>
+    <h1 class="mt-3 text-5xl font-bold text-white sm:text-6xl">Build Status</h1>
+    <p class="mt-4 max-w-2xl text-sm leading-relaxed text-stone-400">
+      Working tracker for richarddeveau.com — what's shipped and what's still open. Not a public page.
+    </p>
+    <dl class="mt-6 flex flex-wrap gap-x-10 gap-y-3 text-xs">
+      <div><dt class="text-stone-500 uppercase tracking-widest">Live site</dt>
+        <dd class="mt-1"><a href="https://richarddeveau.com" class="text-gold hover:underline">richarddeveau.com</a></dd></div>
+      <div><dt class="text-stone-500 uppercase tracking-widest">Repo</dt>
+        <dd class="mt-1 text-stone-300">github.com/garyricke/richarddeveau</dd></div>
+      <div><dt class="text-stone-500 uppercase tracking-widest">Host</dt>
+        <dd class="mt-1 text-stone-300">Netlify (auto-deploy from main)</dd></div>
+      <div><dt class="text-stone-500 uppercase tracking-widest">Updated</dt>
+        <dd class="mt-1 text-stone-300">June 23, 2026</dd></div>
+    </dl>
+  </header>
+
+  <!-- ===================== BUILD STAGES ===================== -->
+  <section class="mt-14">
+    <h2 class="text-xs font-semibold tracking-[0.25em] text-stone-500 uppercase">Build Stages — Shipped</h2>
+
+    <ol class="mt-8 space-y-7 border-l border-stone-800 pl-7">
+      <li class="relative">
+        <span class="absolute -left-[35px] top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gold ring-4 ring-stone-950"><svg class="h-2.5 w-2.5 text-stone-950" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+        <h3 class="text-lg font-bold text-white">Site rebuilt — static HTML + Alpine</h3>
+        <p class="mt-1 text-sm leading-relaxed text-stone-400">Replaced the old Create Next App scaffold with a no-build single-page site. Two files own everything: <code class="text-stone-300">index.html</code> (layout) and <code class="text-stone-300">data.json</code> (all content), with Tailwind + Alpine via CDN.</p>
+      </li>
+      <li class="relative">
+        <span class="absolute -left-[35px] top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gold ring-4 ring-stone-950"><svg class="h-2.5 w-2.5 text-stone-950" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+        <h3 class="text-lg font-bold text-white">Creative Director section removed</h3>
+        <p class="mt-1 text-sm leading-relaxed text-stone-400">Dropped the section, its data, and the nav link. Sections renumbered (Artist is now Section 03).</p>
+      </li>
+      <li class="relative">
+        <span class="absolute -left-[35px] top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gold ring-4 ring-stone-950"><svg class="h-2.5 w-2.5 text-stone-950" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+        <h3 class="text-lg font-bold text-white">All images moved to Cloudinary</h3>
+        <p class="mt-1 text-sm leading-relaxed text-stone-400">Migrated every image off Squarespace onto Cloudinary — 2 book covers, 15 chapter thumbnails, 33 paintings — all auto-optimized (WebP/AVIF, auto quality, sized to context).</p>
+      </li>
+      <li class="relative">
+        <span class="absolute -left-[35px] top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gold ring-4 ring-stone-950"><svg class="h-2.5 w-2.5 text-stone-950" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+        <h3 class="text-lg font-bold text-white">Podcast, testimonials &amp; branding</h3>
+        <p class="mt-1 text-sm leading-relaxed text-stone-400">Living the Next Chapter podcast (Light's Out, Cloudinary-hosted audio); softly auto-fading pull-quote testimonials for both books with star ratings + 6 new reviews; full-name signature logo (hero + footer) and a new SVG favicon; In Plain Sight cover enlarged &amp; unboxed.</p>
+      </li>
+      <li class="relative">
+        <span class="absolute -left-[35px] top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gold ring-4 ring-stone-950"><svg class="h-2.5 w-2.5 text-stone-950" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+        <h3 class="text-lg font-bold text-white">Shipped &amp; live</h3>
+        <p class="mt-1 text-sm leading-relaxed text-stone-400">Pushed to GitHub; Netlify deploys at richarddeveau.com. <code class="text-stone-300">.env</code> secrets and the large podcast mp3 are kept out of the repo.</p>
+      </li>
+      <li class="relative">
+        <span class="absolute -left-[35px] top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gold ring-4 ring-stone-950"><svg class="h-2.5 w-2.5 text-stone-950" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+        <h3 class="text-lg font-bold text-white">Client edits — round 1 <span class="text-sm font-normal text-stone-500">· June 23</span></h3>
+        <p class="mt-1 text-sm leading-relaxed text-stone-400">Worked through Richard's June 21 email — see "Shipped this round" below.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ===================== SHIPPED THIS ROUND ===================== -->
+  <section class="mt-16">
+    <h2 class="text-xs font-semibold tracking-[0.25em] text-stone-500 uppercase">Shipped This Round — June 23, 2026</h2>
+    <p class="mt-2 text-sm text-stone-500">From Richard's June 21 email, plus internal cleanup.</p>
+
+    <ul class="mt-7 space-y-3">
+      <li class="flex gap-3 rounded-lg border border-emerald-900/40 bg-emerald-950/10 p-4">
+        <span class="mt-0.5 flex-none text-emerald-400">✓</span>
+        <p class="text-sm leading-relaxed text-stone-300"><strong class="text-white">New podcast episode (In Plain Sight).</strong> Added the second <em>Living the Next Chapter</em> interview as an embedded video in the In Plain Sight section ("As Heard On"). The YouTube thumbnail carries the logo, title, and episode number.</p>
+      </li>
+      <li class="flex gap-3 rounded-lg border border-emerald-900/40 bg-emerald-950/10 p-4">
+        <span class="mt-0.5 flex-none text-emerald-400">✓</span>
+        <p class="text-sm leading-relaxed text-stone-300"><strong class="text-white">Hero quip — bigger &amp; in quotes.</strong> Now one large, quoted serif line: "Richard's writing is what would result if Tom Clancy and Louise Penny had a baby."</p>
+      </li>
+      <li class="flex gap-3 rounded-lg border border-emerald-900/40 bg-emerald-950/10 p-4">
+        <span class="mt-0.5 flex-none text-emerald-400">✓</span>
+        <p class="text-sm leading-relaxed text-stone-300"><strong class="text-white">In Plain Sight hero word change.</strong> "more exhausted than ever" → "more single-minded than ever."</p>
+      </li>
+      <li class="flex gap-3 rounded-lg border border-emerald-900/40 bg-emerald-950/10 p-4">
+        <span class="mt-0.5 flex-none text-emerald-400">✓</span>
+        <p class="text-sm leading-relaxed text-stone-300"><strong class="text-white">Saffron Cruz pull-quote added to home.</strong> Featured as a prominent banner in the In Plain Sight section: "It reminded me a bit of early Vince Flynn or Brad Meltzer, but with a more personal, grounded lead."</p>
+      </li>
+      <li class="flex gap-3 rounded-lg border border-emerald-900/40 bg-emerald-950/10 p-4">
+        <span class="mt-0.5 flex-none text-emerald-400">✓</span>
+        <p class="text-sm leading-relaxed text-stone-300"><strong class="text-white">Group Exhibits restored.</strong> Pulled the full list from the old art page and added a Group Exhibits block (1995–2025) under Solo Exhibits.</p>
+      </li>
+      <li class="flex gap-3 rounded-lg border border-emerald-900/40 bg-emerald-950/10 p-4">
+        <span class="mt-0.5 flex-none text-emerald-400">✓</span>
+        <p class="text-sm leading-relaxed text-stone-300"><strong class="text-white">Awards edit.</strong> "Carbon Show 2012, Honorable Mention."</p>
+      </li>
+      <li class="flex gap-3 rounded-lg border border-emerald-900/40 bg-emerald-950/10 p-4">
+        <span class="mt-0.5 flex-none text-emerald-400">✓</span>
+        <p class="text-sm leading-relaxed text-stone-300"><strong class="text-white">Book hero text-clipping bug fixed.</strong> Both book heroes now grow with their content and clear the fixed nav, so the section label and title no longer cut off (desktop + phone).</p>
+      </li>
+      <li class="flex gap-3 rounded-lg border border-emerald-900/40 bg-emerald-950/10 p-4">
+        <span class="mt-0.5 flex-none text-emerald-400">✓</span>
+        <p class="text-sm leading-relaxed text-stone-300"><strong class="text-white">Section labels more visible.</strong> Bumped the "Section 0X" eyebrow labels up in size and contrast.</p>
+      </li>
+      <li class="flex gap-3 rounded-lg border border-emerald-900/40 bg-emerald-950/10 p-4">
+        <span class="mt-0.5 flex-none text-emerald-400">✓</span>
+        <p class="text-sm leading-relaxed text-stone-300"><strong class="text-white">Tagline updated.</strong> "Creative Director" removed — now "Novelist · Painter."</p>
+      </li>
+      <li class="flex gap-3 rounded-lg border border-emerald-900/40 bg-emerald-950/10 p-4">
+        <span class="mt-0.5 flex-none text-emerald-400">✓</span>
+        <p class="text-sm leading-relaxed text-stone-300"><strong class="text-white">Contact form hardened.</strong> Now checks the response and only shows "Message sent" on real success; otherwise points the visitor to email Richard directly. (Netlify form notifications are set up.)</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ===================== STILL OPEN ===================== -->
+  <section class="mt-16">
+    <h2 class="text-xs font-semibold tracking-[0.25em] text-stone-500 uppercase">Still Open</h2>
+
+    <div class="mt-7 space-y-4">
+
+      <article class="rounded-xl border border-stone-800 bg-stone-900/60 p-6">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="rounded-full bg-sky-500/15 px-3 py-1 text-xs font-bold tracking-wide text-sky-400 uppercase">Question · Richard</span>
+          <h3 class="text-lg font-bold text-white">Netlify CMS access?</h3>
+        </div>
+        <p class="mt-3 text-sm leading-relaxed text-stone-400">Richard asked whether Netlify gives him a CMS to edit content himself.</p>
+        <p class="mt-2 text-sm leading-relaxed text-stone-500"><span class="text-stone-400 font-semibold">Answer:</span> Netlify has no built-in CMS, but we can add <strong class="text-stone-300">Decap CMS</strong> (formerly Netlify CMS) — a free, Git-based editor at <code class="text-stone-300">/admin</code> that turns <code class="text-stone-300">data.json</code> fields (reviews, synopses, links) into web forms; saving commits to GitHub and auto-deploys. Needs one-time setup (config + Netlify Identity / Git Gateway login). Alternative: keep the current "email the edits to Gary" flow. Richard's call.</p>
+      </article>
+
+      <article class="rounded-xl border border-stone-800 bg-stone-900/60 p-6">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="rounded-full bg-stone-500/15 px-3 py-1 text-xs font-bold tracking-wide text-stone-300 uppercase">Info · Gary</span>
+          <h3 class="text-lg font-bold text-white">Make the domain redirect permanent</h3>
+        </div>
+        <p class="mt-3 text-sm leading-relaxed text-stone-400">The URL currently redirects to the new site; make that redirect permanent (301) once everything's signed off.</p>
+      </article>
+
+      <article class="rounded-xl border border-stone-800 bg-stone-900/60 p-6">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="rounded-full bg-stone-500/15 px-3 py-1 text-xs font-bold tracking-wide text-stone-300 uppercase">Resolved</span>
+          <h3 class="text-lg font-bold text-white">Nav wordmark stays as text</h3>
+        </div>
+        <p class="mt-3 text-sm leading-relaxed text-stone-400">Considered swapping the top-left "Richard DeVeau" for a mini signature logo — decision: keep it as text for legibility at small size.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <footer class="mt-16 border-t border-stone-800 pt-8 text-xs text-stone-600">
+    <p>Internal status page · password-gated (casual privacy only, not real security). Built &amp; maintained by Orbis Design.</p>
+  </footer>
+
+</div>
+</body>
+</html>

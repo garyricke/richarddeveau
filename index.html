@@ -100,6 +100,108 @@
       max-height: calc((100vw - 32px) * 16 / 9);
       border-radius: 8px;
     }
+
+    /* Pulsing "View Chapters" CTA (expanding ring) */
+    @keyframes chapterPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.55); }
+      70%  { box-shadow: 0 0 0 12px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+    .chapter-pulse { animation: chapterPulse 1.9s cubic-bezier(.4,0,.2,1) infinite; }
+    @media (prefers-reduced-motion: reduce) { .chapter-pulse { animation: none; } }
+
+    /* ============================================================
+       Admin entry — discreet badge → password modal → slide-in panel
+       (tuned to the site: Playfair/Inter + literary gold on dark stone)
+       ============================================================ */
+    :root {
+      --adm-accent:        #b5894a;
+      --adm-accent-hover:  #cda161;
+      --adm-ink:           #f5f5f4;
+      --adm-panel-bg:      linear-gradient(165deg, #1c1917 0%, #0c0a09 100%);
+      --adm-modal-bg:      rgba(12,10,9,0.96);
+      --adm-modal-ink:     #1c1917;
+      --adm-font-display:  'Playfair Display', Georgia, serif;
+      --adm-font-body:     'Inter', system-ui, sans-serif;
+    }
+    #adm { position: fixed; bottom: 24px; right: 24px; z-index: 900; font-family: var(--adm-font-display); }
+    #adm-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid color-mix(in srgb, var(--adm-accent) 35%, transparent);
+      background: rgba(28,25,23,0.4); color: color-mix(in srgb, var(--adm-accent) 55%, transparent);
+      font-size: 1rem; cursor: pointer; opacity: 0.3; padding: 0; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity .25s, color .25s, border-color .25s, background .25s;
+    }
+    #adm-btn:hover, #adm-btn:focus-visible, #adm[aria-expanded="true"] #adm-btn {
+      opacity: 1; color: var(--adm-accent); border-color: var(--adm-accent);
+      background: rgba(28,25,23,0.9); outline: none;
+    }
+    #adm-lock {
+      position: fixed; inset: 0; z-index: 1200; display: flex; align-items: center; justify-content: center;
+      background: rgba(12,10,9,0.72); backdrop-filter: blur(6px); font-family: var(--adm-font-body);
+      animation: admFade .2s ease-out;
+    }
+    #adm-lock[hidden] { display: none; }
+    #adm-lock-box {
+      position: relative; background: var(--adm-modal-bg);
+      border: 1px solid color-mix(in srgb, var(--adm-accent) 30%, transparent);
+      border-radius: 16px; padding: 40px 36px; width: min(380px, 90vw); text-align: center;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.55);
+    }
+    #adm-lock-box img { height: 34px; margin: 0 auto 20px; display: block; }
+    #adm-lock-box h2 { font-family: var(--adm-font-display); font-size: 1.8rem; color: var(--adm-accent); letter-spacing: 0.03em; margin: 0 0 6px; }
+    #adm-lock-box .adm-lock-sub { font-size: 0.82rem; color: color-mix(in srgb, var(--adm-ink) 55%, transparent); margin: 0 0 24px; letter-spacing: 0.02em; }
+    #adm-lock-input {
+      width: 100%; padding: 12px 16px; background: rgba(0,0,0,0.3);
+      border: 1px solid color-mix(in srgb, var(--adm-accent) 30%, transparent);
+      border-radius: 8px; color: #fff; font-size: 0.95rem; font-family: inherit; outline: none; transition: border-color .2s;
+    }
+    #adm-lock-input:focus { border-color: var(--adm-accent); }
+    #adm-lock-btn {
+      margin-top: 14px; width: 100%; padding: 12px; background: var(--adm-accent); color: var(--adm-modal-ink);
+      border: 0; border-radius: 8px; font-family: var(--adm-font-display); font-weight: 700; font-size: 1.05rem; letter-spacing: 0.06em;
+      cursor: pointer; transition: background .2s;
+    }
+    #adm-lock-btn:hover { background: var(--adm-accent-hover); }
+    #adm-lock-error { font-size: 0.78rem; color: #ff7a7a; margin: 12px 0 0; min-height: 1.1em; }
+    .adm-shake { animation: admShake .35s; }
+    @keyframes admShake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-7px)} 40%,80%{transform:translateX(7px)} }
+    @keyframes admFade { from { opacity: 0; } to { opacity: 1; } }
+    #adm-scrim { position: fixed; inset: 0; z-index: 1100; background: rgba(12,10,9,0.55); backdrop-filter: blur(2px); animation: admFade .25s ease-out; }
+    #adm-scrim[hidden] { display: none; }
+    #adm-panel {
+      position: fixed; top: 0; right: 0; z-index: 1110; width: min(340px, 88vw); height: 100%;
+      background: var(--adm-panel-bg);
+      border-left: 1px solid color-mix(in srgb, var(--adm-accent) 30%, transparent);
+      box-shadow: -24px 0 70px rgba(0,0,0,0.5); transform: translateX(100%);
+      transition: transform .34s cubic-bezier(.4,0,.2,1); display: flex; flex-direction: column; font-family: var(--adm-font-body);
+    }
+    #adm-panel.open { transform: translateX(0); }
+    .adm-panel-head { display: flex; align-items: flex-end; justify-content: space-between; padding: 26px 24px 18px; border-bottom: 1px solid color-mix(in srgb, var(--adm-accent) 18%, transparent); }
+    .adm-eyebrow { display: block; font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: color-mix(in srgb, var(--adm-accent) 85%, transparent); margin-bottom: 4px; }
+    .adm-panel-brand h3 { font-family: var(--adm-font-display); font-size: 1.6rem; color: #fff; letter-spacing: 0.02em; margin: 0; line-height: 1; }
+    #adm-panel-close { background: transparent; border: 0; cursor: pointer; color: color-mix(in srgb, var(--adm-ink) 60%, transparent); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: color .15s, background .15s; }
+    #adm-panel-close svg { width: 20px; height: 20px; }
+    #adm-panel-close:hover { color: var(--adm-accent); background: color-mix(in srgb, var(--adm-accent) 12%, transparent); }
+    .adm-links { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+    .adm-links a { display: flex; align-items: flex-start; gap: 13px; padding: 13px 14px; border-radius: 10px; text-decoration: none; color: var(--adm-ink); border: 1px solid transparent; transition: background .15s, border-color .15s, transform .15s; }
+    .adm-links a:hover { background: color-mix(in srgb, var(--adm-accent) 10%, transparent); border-color: color-mix(in srgb, var(--adm-accent) 28%, transparent); transform: translateX(-2px); }
+    .adm-ic { flex: none; width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--adm-accent) 14%, transparent); color: var(--adm-accent); border: 1px solid color-mix(in srgb, var(--adm-accent) 22%, transparent); }
+    .adm-ic svg { width: 20px; height: 20px; }
+    .adm-links a:hover .adm-ic { background: color-mix(in srgb, var(--adm-accent) 22%, transparent); }
+    .adm-txt { display: flex; flex-direction: column; gap: 2px; padding-top: 1px; }
+    .adm-txt b { font-weight: 600; font-size: 0.92rem; color: #fff; letter-spacing: 0.01em; }
+    .adm-txt small { font-size: 0.72rem; line-height: 1.4; color: color-mix(in srgb, var(--adm-ink) 62%, transparent); font-weight: 300; }
+    .adm-panel-foot { padding: 14px 18px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+    #adm-lock-out { display: flex; align-items: center; gap: 9px; width: 100%; padding: 11px 14px; background: transparent; border: 1px solid rgba(255,255,255,0.14); border-radius: 9px; color: color-mix(in srgb, var(--adm-ink) 60%, transparent); font-family: var(--adm-font-body); font-size: 0.8rem; letter-spacing: 0.02em; cursor: pointer; transition: color .15s, border-color .15s, background .15s; }
+    #adm-lock-out svg { width: 16px; height: 16px; }
+    #adm-lock-out:hover { color: var(--adm-accent); border-color: color-mix(in srgb, var(--adm-accent) 40%, transparent); background: color-mix(in srgb, var(--adm-accent) 8%, transparent); }
+    @media (prefers-reduced-motion: reduce) {
+      #adm-panel { transition: none; }
+      #adm-lock, #adm-scrim { animation: none; }
+      .adm-shake { animation: none; }
+    }
   </style>
 </head>
 
@@ -385,10 +487,9 @@
         >LinkedIn →</a>
       </div>
       <div class="mt-16 w-full border-t border-stone-200 pt-12">
-        <p class="mb-4 text-xs font-semibold tracking-widest text-stone-400 uppercase">Richard's writing is what would result if</p>
-        <p class="font-serif max-w-2xl text-5xl font-light italic leading-snug text-stone-700">
-          Tom Clancy and Louise Penny had a baby.
-        </p>
+        <blockquote class="font-serif max-w-3xl text-3xl font-light italic leading-snug text-stone-700 sm:text-4xl">
+          &ldquo;Richard's writing is what would result if Tom Clancy and Louise Penny had a baby.&rdquo;
+        </blockquote>
       </div>
     </div>
 
@@ -407,7 +508,7 @@
   <section id="in-plain-sight">
 
     <!-- VIDEO HERO -->
-    <div class="relative h-screen min-h-[600px] overflow-hidden">
+    <div class="relative flex min-h-screen flex-col justify-end overflow-hidden">
 
       <!-- Looping background video -->
       <video
@@ -420,12 +521,11 @@
       <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.7) 80%, rgba(0,0,0,0.95) 100%)"></div>
 
       <!-- Hero content -->
-      <div class="absolute inset-0 flex flex-col justify-end pb-14">
-        <div class="mx-auto w-full max-w-6xl px-6">
+      <div class="relative z-10 mx-auto w-full max-w-6xl px-6 pt-28 pb-16">
 
-          <p class="mb-2 text-xs font-semibold tracking-widest text-white/50 uppercase">Section 01 — Author · Latest Release</p>
+          <p class="mb-3 text-sm font-semibold tracking-widest text-white/75 uppercase">Section 01 — Author · Latest Release</p>
           <p class="mb-1 text-xs font-semibold tracking-widest text-white/60 uppercase" x-text="d.in_plain_sight?.series_note"></p>
-          <h2 class="text-6xl font-bold leading-none text-white sm:text-8xl" x-text="d.in_plain_sight?.title"></h2>
+          <h2 class="text-5xl font-bold leading-[1.08] text-white sm:text-8xl sm:leading-none" x-text="d.in_plain_sight?.title"></h2>
           <p class="font-serif mt-3 text-xl font-light italic text-white/75" x-text="d.in_plain_sight?.subtitle"></p>
 
           <p class="mt-5 max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg" x-text="d.in_plain_sight?.synopsis"></p>
@@ -448,7 +548,6 @@
               class="rounded-full border border-white/50 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
             >Barnes &amp; Noble</a>
           </div>
-        </div>
       </div>
 
       <!-- Scroll indicator -->
@@ -463,6 +562,14 @@
     <!-- BELOW HERO: cover + featured review -->
     <div class="bg-stone-50 py-20">
       <div class="mx-auto max-w-6xl px-6">
+
+        <!-- Featured pull-quote (Saffron Cruz) -->
+        <figure class="mb-16 max-w-4xl border-l-2 border-stone-900 pl-6 sm:mb-20 sm:pl-8" x-show="d.in_plain_sight?.featured_quote">
+          <blockquote class="font-serif text-3xl font-light italic leading-snug text-stone-800 sm:text-4xl"
+            x-text="'&ldquo;' + (d.in_plain_sight?.featured_quote?.text ?? '') + '&rdquo;'"></blockquote>
+          <figcaption class="mt-4 text-xs font-semibold tracking-widest text-stone-400 uppercase" x-text="'— ' + d.in_plain_sight?.featured_quote?.source"></figcaption>
+        </figure>
+
         <div class="grid gap-16 lg:grid-cols-2 lg:items-start">
 
           <!-- Cover (transparent 3D render — no card, floats on the page) -->
@@ -544,6 +651,119 @@
             </template>
           </div>
         </div>
+
+        <!-- Podcast (audio + chapters): Living The Next Chapter — In Plain Sight interview -->
+        <div class="mt-20" x-show="d.in_plain_sight?.podcast">
+          <p class="mb-6 text-xs font-semibold tracking-widest text-stone-400 uppercase">As Heard On</p>
+          <div
+            class="overflow-hidden rounded-2xl bg-[#e0392b] shadow-xl"
+            x-data="podcastPlayer()"
+          >
+            <audio
+              x-ref="audio"
+              :src="d.in_plain_sight?.podcast?.audio"
+              crossorigin="anonymous"
+              preload="metadata"
+              @timeupdate="cur=$event.target.currentTime"
+              @loadedmetadata="dur=$event.target.duration; drawWave()"
+              @ended="playing=false; cur=0; drawWave()"
+            ></audio>
+
+            <!-- Header -->
+            <div class="flex items-center gap-4 p-5 sm:gap-5 sm:p-6">
+              <img :src="d.in_plain_sight?.podcast?.logo" :alt="d.in_plain_sight?.podcast?.show" class="h-16 w-16 flex-none rounded-xl object-cover shadow-md sm:h-20 sm:w-20" />
+              <div class="min-w-0">
+                <p class="text-[11px] font-semibold tracking-widest text-white/70 uppercase">
+                  <span x-text="d.in_plain_sight?.podcast?.show"></span><span x-show="d.in_plain_sight?.podcast?.episode"> · <span x-text="d.in_plain_sight?.podcast?.episode"></span></span>
+                </p>
+                <h3 class="mt-1 font-serif text-lg font-bold leading-snug text-white sm:text-2xl">Richard DeVeau — In Plain Sight</h3>
+                <p class="mt-0.5 text-sm leading-snug text-white/85" x-text="d.in_plain_sight?.podcast?.title"></p>
+                <p class="mt-0.5 text-xs text-white/65">Host — <span x-text="d.in_plain_sight?.podcast?.host"></span></p>
+              </div>
+            </div>
+
+            <!-- Now playing chapter -->
+            <div class="flex items-center gap-2 px-5 sm:px-6" x-show="dur">
+              <span class="flex h-1.5 w-1.5 flex-none rounded-full bg-white" :class="playing ? 'animate-pulse' : 'opacity-50'"></span>
+              <p class="truncate text-xs text-white/75"><span class="text-white/50">Now playing — </span><span class="font-semibold text-white" x-text="activeTitle(d.in_plain_sight?.podcast?.chapters)"></span></p>
+            </div>
+
+            <!-- Reactive waveform (click to seek) -->
+            <div class="px-5 pt-3 sm:px-6">
+              <canvas x-ref="wave" @click="seekWave($event)" class="block w-full cursor-pointer" style="height:56px" aria-label="Audio waveform — click to seek"></canvas>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center gap-2 px-5 pb-5 pt-3 sm:gap-3 sm:px-6 sm:pb-6">
+              <!-- Back 15s -->
+              <button @click="skip(-15)" class="flex flex-col items-center text-white/75 transition hover:text-white" aria-label="Back 15 seconds">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M11 4 7 8l4 4"/><path d="M7 8h7a6 6 0 1 1 0 12H9"/></svg>
+                <span class="-mt-1 text-[9px] font-bold tracking-wide">15</span>
+              </button>
+              <!-- Play / Pause -->
+              <button @click="toggle()" class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-white text-[#e0392b] shadow-md transition hover:scale-105" :aria-label="playing ? 'Pause' : 'Play'">
+                <svg x-show="!playing" class="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <svg x-show="playing" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+              </button>
+              <!-- Forward 30s -->
+              <button @click="skip(30)" class="flex flex-col items-center text-white/75 transition hover:text-white" aria-label="Forward 30 seconds">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="m13 4 4 4-4 4"/><path d="M17 8h-7a6 6 0 1 0 0 12h5"/></svg>
+                <span class="-mt-1 text-[9px] font-bold tracking-wide">30</span>
+              </button>
+              <!-- Time -->
+              <span class="ml-1 flex-none text-xs tabular-nums text-white/80" x-text="fmt(cur) + ' / ' + fmt(dur)"></span>
+              <div class="flex-1"></div>
+              <!-- Speed -->
+              <button @click="cycleRate()" class="flex-none rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold tabular-nums text-white transition hover:bg-white/25" aria-label="Playback speed" x-text="rate + '×'"></button>
+            </div>
+
+            <!-- Chapters: collapsed behind a pulsing CTA → expands ALL into view (no scroll) -->
+            <div class="border-t border-white/15 bg-black/10 px-4 py-5 sm:px-5">
+
+              <!-- Pulsing "View Chapters" button (shown until opened) -->
+              <button
+                x-show="!chaptersOpen"
+                @click="chaptersOpen = true"
+                class="chapter-pulse mx-auto flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-bold text-[#e0392b] shadow-md transition hover:scale-[1.03]"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8M8 12h8M8 17h5M4 7h.01M4 12h.01M4 17h.01"/></svg>
+                View Chapters
+                <span class="opacity-70" x-text="'(' + (d.in_plain_sight?.podcast?.chapters?.length || 0) + ')'"></span>
+              </button>
+
+              <!-- Expanded list — every chapter visible -->
+              <div
+                x-show="chaptersOpen" style="display:none"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 -translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+              >
+                <div class="mb-2 flex items-center justify-between px-2">
+                  <p class="text-[11px] font-semibold tracking-widest text-white/60 uppercase">Chapters · click to jump</p>
+                  <button @click="chaptersOpen = false" class="flex items-center gap-1 text-[11px] font-semibold tracking-widest text-white/60 uppercase transition hover:text-white">
+                    Hide
+                    <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 15l-6-6-6 6"/></svg>
+                  </button>
+                </div>
+                <ul>
+                  <template x-for="(ch, idx) in d.in_plain_sight?.podcast?.chapters ?? []" :key="idx">
+                    <li>
+                      <button
+                        @click="jump(ch.t)"
+                        class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition"
+                        :class="isActive(idx, d.in_plain_sight?.podcast?.chapters) ? 'bg-white/20' : 'hover:bg-white/10'"
+                      >
+                        <span class="w-12 flex-none text-xs font-semibold tabular-nums" :class="isActive(idx, d.in_plain_sight?.podcast?.chapters) ? 'text-white' : 'text-white/55'" x-text="fmt(ch.t)"></span>
+                        <span class="text-sm" :class="isActive(idx, d.in_plain_sight?.podcast?.chapters) ? 'font-semibold text-white' : 'text-white/85'" x-text="ch.title"></span>
+                        <svg x-show="isActive(idx, d.in_plain_sight?.podcast?.chapters) && playing" class="ml-auto h-3.5 w-3.5 flex-none text-white" fill="currentColor" viewBox="0 0 24 24" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+                      </button>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -552,7 +772,7 @@
   <section id="lights-out">
 
     <!-- VIDEO HERO -->
-    <div class="relative h-screen min-h-[600px] overflow-hidden">
+    <div class="relative flex min-h-screen flex-col justify-end overflow-hidden">
 
       <!-- Looping background video -->
       <video
@@ -565,12 +785,11 @@
       <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.75) 80%, rgba(0,0,0,0.95) 100%)"></div>
 
       <!-- Hero content -->
-      <div class="absolute inset-0 flex flex-col justify-end pb-14">
-        <div class="mx-auto w-full max-w-6xl px-6">
+      <div class="relative z-10 mx-auto w-full max-w-6xl px-6 pt-28 pb-16">
 
-          <p class="mb-2 text-xs font-semibold tracking-widest text-white/50 uppercase">Section 02 — Author · Book One</p>
+          <p class="mb-3 text-sm font-semibold tracking-widest text-white/75 uppercase">Section 02 — Author · Book One</p>
           <p class="mb-1 text-xs font-semibold tracking-widest text-white/60 uppercase" x-text="d.lights_out?.series_note"></p>
-          <h2 class="text-6xl font-bold leading-none text-white sm:text-8xl" x-text="d.lights_out?.title"></h2>
+          <h2 class="text-5xl font-bold leading-[1.08] text-white sm:text-8xl sm:leading-none" x-text="d.lights_out?.title"></h2>
           <p class="font-serif mt-3 text-xl font-light italic text-white/75" x-text="d.lights_out?.subtitle"></p>
           <p class="font-serif mt-2 text-base font-light italic text-white/60" x-text="d.lights_out?.tagline"></p>
 
@@ -596,7 +815,6 @@
               class="rounded-full border border-white/50 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
             >Barnes &amp; Noble</a>
           </div>
-        </div>
       </div>
 
       <!-- Scroll indicator -->
@@ -662,54 +880,101 @@
         <div class="mt-16" x-show="d.lights_out?.podcast">
           <p class="mb-6 text-xs font-semibold tracking-widest text-stone-500 uppercase">As Heard On</p>
           <div
-            class="flex flex-col gap-5 rounded-2xl bg-[#e0392b] p-5 sm:flex-row sm:items-center sm:gap-6 sm:p-7"
-            x-data="{
-              playing: false, cur: 0, dur: 0,
-              fmt(s) { if (!s || isNaN(s)) return '0:00'; const m = Math.floor(s / 60); return m + ':' + String(Math.floor(s % 60)).padStart(2, '0'); },
-              toggle() { const a = $refs.audio; if (a.paused) { a.play(); this.playing = true; } else { a.pause(); this.playing = false; } },
-              seek(e) { const r = $refs.bar.getBoundingClientRect(); $refs.audio.currentTime = ((e.clientX - r.left) / r.width) * this.dur; }
-            }"
+            class="overflow-hidden rounded-2xl bg-[#e0392b] shadow-xl"
+            x-data="podcastPlayer()"
           >
             <audio
               x-ref="audio"
               :src="d.lights_out?.podcast?.audio"
+              crossorigin="anonymous"
               preload="metadata"
-              @timeupdate="cur = $event.target.currentTime"
-              @loadedmetadata="dur = $event.target.duration"
-              @ended="playing = false; cur = 0"
+              @timeupdate="cur=$event.target.currentTime"
+              @loadedmetadata="dur=$event.target.duration; drawWave()"
+              @ended="playing=false; cur=0; drawWave()"
             ></audio>
 
-            <!-- Podcast logo -->
-            <img
-              :src="d.lights_out?.podcast?.logo"
-              :alt="d.lights_out?.podcast?.show"
-              class="h-28 w-28 flex-none self-center rounded-xl object-cover shadow-lg sm:self-auto"
-            />
+            <!-- Header -->
+            <div class="flex items-center gap-4 p-5 sm:gap-5 sm:p-6">
+              <img :src="d.lights_out?.podcast?.logo" :alt="d.lights_out?.podcast?.show" class="h-16 w-16 flex-none rounded-xl object-cover shadow-md sm:h-20 sm:w-20" />
+              <div class="min-w-0">
+                <p class="text-[11px] font-semibold tracking-widest text-white/70 uppercase">
+                  <span x-text="d.lights_out?.podcast?.show"></span><span x-show="d.lights_out?.podcast?.episode"> · <span x-text="d.lights_out?.podcast?.episode"></span></span>
+                </p>
+                <h3 class="mt-1 font-serif text-lg font-bold leading-snug text-white sm:text-2xl">Richard DeVeau — Light's Out</h3>
+                <p class="mt-0.5 text-sm leading-snug text-white/85" x-text="d.lights_out?.podcast?.title"></p>
+                <p class="mt-0.5 text-xs text-white/65">Host — <span x-text="d.lights_out?.podcast?.host"></span></p>
+              </div>
+            </div>
 
-            <!-- Text + player -->
-            <div class="min-w-0 flex-1">
-              <p class="text-[11px] font-semibold tracking-widest text-white/70 uppercase" x-text="d.lights_out?.podcast?.show"></p>
-              <h3 class="mt-1 font-serif text-xl font-bold leading-snug text-white sm:text-2xl">Richard DeVeau — Light's Out</h3>
-              <p class="mt-1 text-sm leading-snug text-white/85" x-text="d.lights_out?.podcast?.title"></p>
-              <p class="mt-1 text-xs text-white/65">Host — <span x-text="d.lights_out?.podcast?.host"></span></p>
+            <!-- Now playing chapter -->
+            <div class="flex items-center gap-2 px-5 sm:px-6" x-show="dur && (d.lights_out?.podcast?.chapters || []).length">
+              <span class="flex h-1.5 w-1.5 flex-none rounded-full bg-white" :class="playing ? 'animate-pulse' : 'opacity-50'"></span>
+              <p class="truncate text-xs text-white/75"><span class="text-white/50">Now playing — </span><span class="font-semibold text-white" x-text="activeTitle(d.lights_out?.podcast?.chapters)"></span></p>
+            </div>
 
-              <!-- Player controls -->
-              <div class="mt-4 flex items-center gap-4">
-                <button
-                  @click="toggle()"
-                  class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-white text-[#e0392b] shadow-md transition hover:scale-105"
-                  :aria-label="playing ? 'Pause' : 'Play'"
-                >
-                  <svg x-show="!playing" class="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                  <svg x-show="playing" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-                </button>
+            <!-- Reactive waveform (click to seek) -->
+            <div class="px-5 pt-3 sm:px-6">
+              <canvas x-ref="wave" @click="seekWave($event)" class="block w-full cursor-pointer" style="height:56px" aria-label="Audio waveform — click to seek"></canvas>
+            </div>
 
-                <div class="flex flex-1 items-center gap-3">
-                  <div x-ref="bar" @click="seek($event)" class="relative h-1.5 flex-1 cursor-pointer rounded-full bg-white/30">
-                    <div class="absolute inset-y-0 left-0 rounded-full bg-white" :style="{ width: (dur ? (cur / dur * 100) : 0) + '%' }"></div>
-                  </div>
-                  <span class="flex-none text-xs tabular-nums text-white/80" x-text="fmt(cur) + ' / ' + fmt(dur)"></span>
+            <!-- Controls -->
+            <div class="flex items-center gap-2 px-5 pb-5 pt-3 sm:gap-3 sm:px-6 sm:pb-6">
+              <button @click="skip(-15)" class="flex flex-col items-center text-white/75 transition hover:text-white" aria-label="Back 15 seconds">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M11 4 7 8l4 4"/><path d="M7 8h7a6 6 0 1 1 0 12H9"/></svg>
+                <span class="-mt-1 text-[9px] font-bold tracking-wide">15</span>
+              </button>
+              <button @click="toggle()" class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-white text-[#e0392b] shadow-md transition hover:scale-105" :aria-label="playing ? 'Pause' : 'Play'">
+                <svg x-show="!playing" class="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <svg x-show="playing" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+              </button>
+              <button @click="skip(30)" class="flex flex-col items-center text-white/75 transition hover:text-white" aria-label="Forward 30 seconds">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="m13 4 4 4-4 4"/><path d="M17 8h-7a6 6 0 1 0 0 12h5"/></svg>
+                <span class="-mt-1 text-[9px] font-bold tracking-wide">30</span>
+              </button>
+              <span class="ml-1 flex-none text-xs tabular-nums text-white/80" x-text="fmt(cur) + ' / ' + fmt(dur)"></span>
+              <div class="flex-1"></div>
+              <button @click="cycleRate()" class="flex-none rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold tabular-nums text-white transition hover:bg-white/25" aria-label="Playback speed" x-text="rate + '×'"></button>
+            </div>
+
+            <!-- Chapters: collapsed behind a pulsing CTA → expands ALL into view (no scroll) -->
+            <div class="border-t border-white/15 bg-black/10 px-4 py-5 sm:px-5" x-show="(d.lights_out?.podcast?.chapters || []).length">
+              <button
+                x-show="!chaptersOpen"
+                @click="chaptersOpen = true"
+                class="chapter-pulse mx-auto flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-bold text-[#e0392b] shadow-md transition hover:scale-[1.03]"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8M8 12h8M8 17h5M4 7h.01M4 12h.01M4 17h.01"/></svg>
+                View Chapters
+                <span class="opacity-70" x-text="'(' + (d.lights_out?.podcast?.chapters?.length || 0) + ')'"></span>
+              </button>
+              <div
+                x-show="chaptersOpen" style="display:none"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 -translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+              >
+                <div class="mb-2 flex items-center justify-between px-2">
+                  <p class="text-[11px] font-semibold tracking-widest text-white/60 uppercase">Chapters · click to jump</p>
+                  <button @click="chaptersOpen = false" class="flex items-center gap-1 text-[11px] font-semibold tracking-widest text-white/60 uppercase transition hover:text-white">
+                    Hide
+                    <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 15l-6-6-6 6"/></svg>
+                  </button>
                 </div>
+                <ul>
+                  <template x-for="(ch, idx) in d.lights_out?.podcast?.chapters ?? []" :key="idx">
+                    <li>
+                      <button
+                        @click="jump(ch.t)"
+                        class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition"
+                        :class="isActive(idx, d.lights_out?.podcast?.chapters) ? 'bg-white/20' : 'hover:bg-white/10'"
+                      >
+                        <span class="w-12 flex-none text-xs font-semibold tabular-nums" :class="isActive(idx, d.lights_out?.podcast?.chapters) ? 'text-white' : 'text-white/55'" x-text="fmt(ch.t)"></span>
+                        <span class="text-sm" :class="isActive(idx, d.lights_out?.podcast?.chapters) ? 'font-semibold text-white' : 'text-white/85'" x-text="ch.title"></span>
+                        <svg x-show="isActive(idx, d.lights_out?.podcast?.chapters) && playing" class="ml-auto h-3.5 w-3.5 flex-none text-white" fill="currentColor" viewBox="0 0 24 24" style="display:none"><path d="M8 5v14l11-7z"/></svg>
+                      </button>
+                    </li>
+                  </template>
+                </ul>
               </div>
             </div>
           </div>
@@ -774,7 +1039,7 @@
     <div class="mx-auto max-w-6xl px-6">
 
       <!-- Label -->
-      <p class="mb-12 text-xs font-semibold tracking-widest text-stone-400 uppercase">Section 03 — Visual Artist</p>
+      <p class="mb-12 text-sm font-semibold tracking-widest text-stone-500 uppercase">Section 03 — Visual Artist</p>
 
       <!-- Artist statement -->
       <div class="mb-16 max-w-3xl">
@@ -797,6 +1062,23 @@
               </li>
             </template>
           </ol>
+
+          <!-- Group Exhibits -->
+          <div class="mt-12" x-show="(d.artist?.group_exhibits ?? []).length">
+            <p class="mb-6 text-xs font-semibold tracking-widest text-stone-400 uppercase">Group Exhibits</p>
+            <ol class="space-y-4">
+              <template x-for="grp in d.artist?.group_exhibits ?? []" :key="grp.year">
+                <li class="flex gap-4">
+                  <span class="w-20 shrink-0 text-xs font-bold text-stone-400" x-text="grp.year"></span>
+                  <ul class="space-y-1.5">
+                    <template x-for="(show, i) in grp.shows" :key="i">
+                      <li class="text-sm leading-snug text-stone-600" x-text="show"></li>
+                    </template>
+                  </ul>
+                </li>
+              </template>
+            </ol>
+          </div>
         </div>
 
         <!-- Publications + Awards -->
@@ -907,6 +1189,112 @@
   </footer>
 
   <script>
+    // Chaptered podcast player with a reactive (Web Audio) waveform + speed + skip controls.
+    function podcastPlayer() {
+      const BARS = 64;
+      // Deterministic pseudo-waveform peaks (organic-looking, stable across reloads).
+      const peaks = [];
+      for (let i = 0; i < BARS; i++) {
+        const x = i / BARS;
+        let v = 0.5 + 0.34 * Math.sin(x * 23) + 0.22 * Math.sin(x * 9 + 1) + 0.16 * Math.sin(x * 47 + 2.5);
+        const n = Math.abs((Math.sin(i * 12.9898) * 43758.5453) % 1);
+        v = 0.18 + 0.82 * Math.abs(0.6 * Math.abs(v) + 0.4 * n);
+        peaks.push(Math.max(0.12, Math.min(1, v)));
+      }
+      return {
+        playing: false, cur: 0, dur: 0, chaptersOpen: false, rate: 1,
+        _ctx: null, _an: null, _data: null, _raf: 0, _failed: false,
+        _live: new Array(BARS).fill(0),
+
+        fmt(s) { if (!s || isNaN(s)) return '0:00'; const m = Math.floor(s / 60); return m + ':' + String(Math.floor(s % 60)).padStart(2, '0'); },
+
+        init() { this.$nextTick(() => this.drawWave()); },
+
+        // Lazily wire the audio element into a Web Audio analyser (needs a user gesture).
+        _setup() {
+          if (this._ctx || this._failed) return;
+          try {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            this._ctx = new AC();
+            const src = this._ctx.createMediaElementSource(this.$refs.audio);
+            this._an = this._ctx.createAnalyser();
+            this._an.fftSize = 256;
+            this._an.smoothingTimeConstant = 0.8;
+            this._data = new Uint8Array(this._an.frequencyBinCount);
+            src.connect(this._an);
+            this._an.connect(this._ctx.destination);
+          } catch (e) { this._failed = true; }
+        },
+
+        _play() {
+          const a = this.$refs.audio;
+          this._setup();
+          if (this._ctx && this._ctx.state === 'suspended') this._ctx.resume();
+          a.play(); this.playing = true; this.loop();
+        },
+        toggle() {
+          const a = this.$refs.audio;
+          if (a.paused) this._play();
+          else { a.pause(); this.playing = false; this.drawWave(); }
+        },
+        jump(t) { const a = this.$refs.audio; a.currentTime = t; this.cur = t; this._play(); },
+        skip(d) { const a = this.$refs.audio; a.currentTime = Math.max(0, Math.min(this.dur || a.duration || 0, a.currentTime + d)); this.cur = a.currentTime; this.drawWave(); },
+        cycleRate() { const o = [1, 1.25, 1.5, 2, 0.75]; this.rate = o[(o.indexOf(this.rate) + 1) % o.length]; this.$refs.audio.playbackRate = this.rate; },
+        seekWave(e) {
+          const cv = this.$refs.wave, r = cv.getBoundingClientRect();
+          const f = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+          this.$refs.audio.currentTime = f * (this.dur || 0);
+          this.cur = this.$refs.audio.currentTime; this.drawWave();
+        },
+
+        loop() { this.drawWave(); if (this.playing) this._raf = requestAnimationFrame(() => this.loop()); },
+
+        drawWave() {
+          const cv = this.$refs.wave; if (!cv) return;
+          const ctx = cv.getContext('2d'); if (!ctx) return;
+          const dpr = window.devicePixelRatio || 1;
+          const w = cv.clientWidth || 0, h = 56;
+          if (!w) return;
+          if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, w, h);
+          if (this.playing && this._an && !this._failed) this._an.getByteFrequencyData(this._data);
+          const gap = 3, bw = Math.max(1, (w - (BARS - 1) * gap) / BARS);
+          const a = this.$refs.audio;
+          const ct = (a && !a.paused) ? a.currentTime : this.cur;
+          const prog = this.dur ? ct / this.dur : 0;
+          const now = performance.now();
+          for (let i = 0; i < BARS; i++) {
+            let amp;
+            if (this.playing) {
+              let live;
+              if (this._an && !this._failed) {
+                const bin = Math.floor((i / BARS) * this._data.length * 0.72);
+                live = this._data[bin] / 255;
+              } else {
+                live = 0.35 + 0.32 * Math.abs(Math.sin(now / 260 + i * 0.55));
+              }
+              this._live[i] += (live - this._live[i]) * 0.35;
+              amp = Math.min(1, peaks[i] * (0.7 + 1.15 * this._live[i]));
+            } else {
+              amp = peaks[i];
+            }
+            amp = Math.max(0.06, amp);
+            const barH = amp * (h - 6), x = i * (bw + gap), y = (h - barH) / 2;
+            const f = (i + 0.5) / BARS;
+            ctx.fillStyle = f <= prog ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.32)';
+            const r = Math.min(bw / 2, 2.5);
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(x, y, bw, barH, r); else ctx.rect(x, y, bw, barH);
+            ctx.fill();
+          }
+        },
+
+        isActive(i, ch) { if (!ch || !ch.length) return false; return this.cur >= ch[i].t && (i === ch.length - 1 || this.cur < ch[i + 1].t); },
+        activeTitle(ch) { if (!ch || !ch.length) return ''; let t = ch[0].title; for (const c of ch) { if (this.cur >= c.t) t = c.title; } return t; }
+      };
+    }
+
     function site() {
       return {
         d: {},
@@ -976,14 +1364,15 @@
           this.contact.submitting = true;
           const data = new FormData(e.target);
           try {
-            await fetch('/', {
+            const res = await fetch('/', {
               method: 'POST',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
               body: new URLSearchParams(data).toString()
             });
+            if (!res.ok) throw new Error('Submission failed (' + res.status + ')');
             this.contact.success = true;
           } catch (err) {
-            alert('Something went wrong. Please try again.');
+            alert('Sorry — your message could not be sent. Please email richardadeveau@gmail.com directly.');
           } finally {
             this.contact.submitting = false;
           }
@@ -996,6 +1385,87 @@
         }
       };
     }
+  </script>
+
+  <!-- ============================================================
+       Admin entry — password gate → slide-in panel (password: writeme)
+       ============================================================ -->
+  <div id="adm">
+    <button id="adm-btn" type="button" aria-label="Admin access" aria-haspopup="dialog" aria-expanded="false">A</button>
+  </div>
+
+  <div id="adm-lock" hidden>
+    <div id="adm-lock-box" role="dialog" aria-modal="true" aria-labelledby="adm-lock-title">
+      <img src="assets/logo-richard-deveau-white.svg" alt="Richard DeVeau" onerror="this.style.display='none'">
+      <h2 id="adm-lock-title">Admin Access</h2>
+      <p class="adm-lock-sub">Internal area · enter the password to continue.</p>
+      <input id="adm-lock-input" type="password" placeholder="Enter password" autocomplete="current-password">
+      <button id="adm-lock-btn" type="button">Enter</button>
+      <p id="adm-lock-error" role="alert"></p>
+    </div>
+  </div>
+
+  <div id="adm-scrim" hidden></div>
+  <aside id="adm-panel" role="dialog" aria-modal="true" aria-label="Admin links" aria-hidden="true">
+    <div class="adm-panel-head">
+      <div class="adm-panel-brand">
+        <span class="adm-eyebrow">Richard DeVeau</span>
+        <h3>Admin</h3>
+      </div>
+      <button id="adm-panel-close" type="button" aria-label="Close admin panel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <nav class="adm-links">
+      <a href="status.html">
+        <span class="adm-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 5 4-14 2 7h6"/></svg></span>
+        <span class="adm-txt"><b>Build &amp; Status</b><small>Build stages + open items</small></span>
+      </a>
+    </nav>
+
+    <div class="adm-panel-foot">
+      <button id="adm-lock-out" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Lock &amp; sign out
+      </button>
+    </div>
+  </aside>
+
+  <script>
+  (function(){
+    var KEY='rdv_admin', PASS='writeme';
+    var btn=document.getElementById('adm-btn');
+    if(!btn) return;
+    var lock=document.getElementById('adm-lock'),
+        lockInput=document.getElementById('adm-lock-input'),
+        lockBtn=document.getElementById('adm-lock-btn'),
+        lockBox=document.getElementById('adm-lock-box'),
+        lockErr=document.getElementById('adm-lock-error'),
+        panel=document.getElementById('adm-panel'),
+        scrim=document.getElementById('adm-scrim'),
+        panelClose=document.getElementById('adm-panel-close'),
+        signOut=document.getElementById('adm-lock-out');
+
+    function authed(){ try{return sessionStorage.getItem(KEY)==='1';}catch(e){return false;} }
+    function openPanel(){ scrim.hidden=false; panel.classList.add('open'); panel.setAttribute('aria-hidden','false'); btn.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+    function closePanel(){ panel.classList.remove('open'); scrim.hidden=true; panel.setAttribute('aria-hidden','true'); btn.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+    function openLock(){ lock.hidden=false; lockErr.textContent=''; lockInput.value=''; setTimeout(function(){lockInput.focus();},30); }
+    function closeLock(){ lock.hidden=true; }
+    function tryPass(){
+      if(lockInput.value===PASS){ try{sessionStorage.setItem(KEY,'1');}catch(e){} closeLock(); openPanel(); }
+      else{ lockErr.textContent='Incorrect password. Try again.'; lockBox.classList.remove('adm-shake'); void lockBox.offsetWidth; lockBox.classList.add('adm-shake'); lockInput.select(); }
+    }
+
+    btn.addEventListener('click',function(e){ e.stopPropagation(); if(authed()) openPanel(); else openLock(); });
+    lockBtn.addEventListener('click',tryPass);
+    lockInput.addEventListener('keydown',function(e){if(e.key==='Enter')tryPass();});
+    panelClose.addEventListener('click',closePanel);
+    scrim.addEventListener('click',closePanel);
+    signOut.addEventListener('click',function(){ try{sessionStorage.removeItem(KEY);}catch(e){} closePanel(); });
+    lock.addEventListener('click',function(e){ if(e.target===lock) closeLock(); });
+    document.addEventListener('keydown',function(e){ if(e.key!=='Escape') return; if(!lock.hidden) closeLock(); else if(panel.classList.contains('open')) closePanel(); });
+  })();
   </script>
 
 </body>
